@@ -1,7 +1,7 @@
 import warnings
 
 from .._internal.stat import Stat
-from ..api.log import Log
+from ..api.rewards import Log
 
 
 class LoggedFloat:

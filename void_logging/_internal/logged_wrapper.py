@@ -2,8 +2,7 @@ from typing import List, Dict, Any
 
 from rlgym.api import AgentID, StateType, RewardType, RewardFunction
 
-from .._internal.logged_float import Log
-from ..api.logged_reward import LoggedReward
+from ..api.rewards import LoggedReward, Log
 
 
 class LoggedWrapper(LoggedReward):

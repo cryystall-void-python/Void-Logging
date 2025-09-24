@@ -2,12 +2,11 @@ import copy
 from abc import ABC
 from typing import Any, List, Dict
 
-from .._internal.logged_reward_manager import LoggedRewardManager
-from ..logging_utils import REWARDS_HEADER
+from ..._internal.logged_reward_manager import LoggedRewardManager
+from ...logging_utils import REWARDS_HEADER
 
 from rlgym.api import AgentID, StateType
 from rlgym.api.rlgym import RewardFunction
-
 
 class LoggedReward(RewardFunction, ABC):
     def __init__(self, name: str = "Logged reward", weight = 1.0):

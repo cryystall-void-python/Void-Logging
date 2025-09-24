@@ -3,7 +3,8 @@ import warnings
 from rlgym.api import AgentID
 from rlgym.rocket_league.api.game_state import GameState
 
-from .._internal.logged_float import LoggedFloat, Log
+from .._internal.logged_float import LoggedFloat
+from ..api.rewards import Log
 
 class LoggedRewardManager:
     def __init__(self):

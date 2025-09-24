@@ -3,8 +3,8 @@ from typing import List, Dict, Any, NamedTuple
 from rlgym.api import AgentID, RewardFunction
 from rlgym.rocket_league.api import GameState
 
-from ..api.logged_reward import LoggedReward
-from .._internal.logged_wrapper import LoggedWrapper
+from ..rewards import LoggedReward
+from ..._internal.logged_wrapper import LoggedWrapper
 
 class LoggedCombinedRewardArg(NamedTuple):
     reward_fn: RewardFunction

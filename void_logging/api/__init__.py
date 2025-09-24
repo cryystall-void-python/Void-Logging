@@ -1,5 +1,3 @@
-from .logged_reward import LoggedReward
-from .logged_combined_reward import LoggedCombinedReward, LoggedCombinedRewardArg
-from .log import Log
+from . import rewards, loggers
 
-__all__ = ["Log", "LoggedReward", "LoggedCombinedReward", "LoggedCombinedRewardArg"]
+__all__ = ["rewards", "loggers"]
