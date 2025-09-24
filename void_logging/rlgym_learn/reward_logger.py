@@ -1,6 +1,7 @@
 from typing import Generic, Dict, Any, List
 
 from pydantic import BaseModel
+from rlgym_learn import PyAnySerdeType
 from rlgym_learn.api import AgentControllerData
 from rlgym_learn_algos.logging import DictMetricsLogger, InnerMetricsLoggerConfig, \
     InnerMetricsLoggerAdditionalDerivedConfig, MetricsLoggerConfig
@@ -9,6 +10,15 @@ from ..logging_utils import AvgTracker, REWARDS_HEADER
 
 class RewardLoggerConfigModel(BaseModel, extra="forbid"):
     pass
+
+
+reward_logger_serde = PyAnySerdeType.DICT(
+    keys_serde_type=PyAnySerdeType.STRING(),
+    values_serde_type=PyAnySerdeType.DICT(
+        keys_serde_type=PyAnySerdeType.STRING(),
+        values_serde_type=PyAnySerdeType.FLOAT()
+    )
+)
 
 class RewardLogger(
     DictMetricsLogger[
