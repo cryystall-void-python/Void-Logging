@@ -2,6 +2,8 @@ import math
 
 REWARDS_HEADER = "Rewards"
 METRICS_HEADER = "Metrics"
+PLAYERS_METRICS_HEADER = "Players"
+STATE_METRICS_HEADER = "State"
 
 class AvgTracker:
     def __init__(self):

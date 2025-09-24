@@ -44,7 +44,7 @@ class BallAccelerationMetricSharedInfoProvider(StateMetricSharedInfoProvider):
 
         _accel_raw = _current_vel - self._last_velocity
 
-        if self._count_deceleration:
+        if not self._count_deceleration:
             _accel_raw = max(0, _accel_raw)
 
         _accel = _accel_raw / (_current_tick_count - self._last_tick_count)
