@@ -3,13 +3,18 @@ from typing import List, Dict, Any
 
 from rlgym.api import SharedInfoProvider, AgentID, StateType
 
+from void_logging.logging_utils import METRICS_HEADER
+
 
 class MetricSharedInfoProvider(SharedInfoProvider, ABC):
     def __init__(self, metric_name: str):
         self._metric_name = metric_name
 
     def create(self, shared_info: Dict[str, Any]) -> Dict[str, Any]:
-        shared_info[self._metric_name] = None
+        if METRICS_HEADER not in shared_info.keys():
+            shared_info[METRICS_HEADER] = {}
+
+        shared_info[METRICS_HEADER][self._metric_name] = None
         return shared_info
 
 class StateMetricSharedInfoProvider(MetricSharedInfoProvider, ABC):

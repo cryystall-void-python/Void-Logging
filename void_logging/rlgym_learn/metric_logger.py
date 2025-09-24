@@ -13,13 +13,12 @@ def get_serde_type(value: Any) -> int:
     elif isinstance(value, int):
         return 1
 
-type CustomMetricSerde = PyAnySerdeType.DICT(
+custom_metrics_serde = lambda: PyAnySerdeType.DICT(
     keys_serde_type=PyAnySerdeType.STRING,
     values_serde_type=PyAnySerdeType.UNION(
         option_serde_types=[PyAnySerdeType.FLOAT, PyAnySerdeType.INT],
         option_choice_fn=get_serde_type
-    )
-)
+    ))
 
 class CustomMetricLoggerModelConfig(BaseModel, extra="forbid"):
     pass
