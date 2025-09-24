@@ -12,12 +12,24 @@ class MetricSharedInfoProvider(SharedInfoProvider, ABC):
         shared_info[self._metric_name] = None
         return shared_info
 
-class PlayerMetricSharedInfoProvider(MetricSharedInfoProvider, ABC):
-    def create(self, shared_info: Dict[str, Any]) -> Dict[str, Any]:
-        shared_info[self._metric_name] = None
-        return shared_info
+class StateMetricSharedInfoProvider(MetricSharedInfoProvider, ABC):
+    def init_metric_value(self, initial_state: StateType, shared_info: Dict[str, Any]):
+        return self.get_metric_value(initial_state, shared_info)
 
     @abstractmethod
+    def get_metric_value(self, state: StateType, shared_info: Dict[str, Any]):
+        pass
+
+    def set_state(self, agents: List[AgentID], initial_state: StateType, shared_info: Dict[str, Any]) -> Dict[str, Any]:
+        shared_info[self._metric_name] = self.init_metric_value(initial_state, shared_info)
+        return shared_info
+
+    def step(self, agents: List[AgentID], state: StateType, shared_info: Dict[str, Any]) -> Dict[str, Any]:
+        shared_info[self._metric_name] = self.get_metric_value(state, shared_info)
+        return shared_info
+
+class PlayerMetricSharedInfoProvider(MetricSharedInfoProvider, ABC):
+
     def init_metric_value_for(self, agent: AgentID, initial_state: StateType, shared_info: Dict[str, Any]) -> Any:
         """
         Called on the first step of the episode, gets the metric of a player, can be used to initialize stuff
@@ -26,7 +38,7 @@ class PlayerMetricSharedInfoProvider(MetricSharedInfoProvider, ABC):
         :param shared_info: Shared info
         :return: The metric of the player
         """
-        pass
+        return self.get_metric_value_for(agent, initial_state, shared_info)
 
     @abstractmethod
     def get_metric_value_for(self, agent: AgentID, state: StateType, shared_info: Dict[str, Any]) -> Any:
