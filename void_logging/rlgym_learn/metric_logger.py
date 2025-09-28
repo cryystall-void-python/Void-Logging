@@ -24,7 +24,7 @@ custom_metrics_serde = lambda: PyAnySerdeType.TYPEDDICT(
         ),
         STATE_METRICS_HEADER: PyAnySerdeType.DICT(
             keys_serde_type=PyAnySerdeType.STRING(),
-            values_serde_type=PyAnySerdeType.FLOAT()
+            values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT())
         )
     }
 )
@@ -66,12 +66,14 @@ class CustomMetricLogger(DictMetricsLogger[
                 for agent, value in agent_metrics_data.items():
                     if metric not in trackers.keys():
                         trackers.setdefault(metric, AvgTracker())
-                    trackers[metric] += float(value)
+                    if value is not None:
+                        trackers[metric] += float(value)
 
             for metric, value in state_metrics.items():
                 if metric not in trackers.keys():
                     trackers.setdefault(metric, AvgTracker())
-                trackers[metric] += float(value)
+                if value is not None:
+                    trackers[metric] += float(value)
 
         metrics.setdefault(METRICS_HEADER, {})
 

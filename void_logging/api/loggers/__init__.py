@@ -1,3 +1,3 @@
-from .metric_provider import MetricSharedInfoProvider, MultiMetricSharedInfoProvider, PlayerMetricSharedInfoProvider
+from .metric_provider import MetricSharedInfoProvider
 
-__all__ = ["MetricSharedInfoProvider", "MultiMetricSharedInfoProvider", "PlayerMetricSharedInfoProvider"]
+__all__ = ["MetricSharedInfoProvider"]
