@@ -47,6 +47,6 @@ class LoggedCombinedReward(LoggedReward):
         for reward_fn in self.reward_fns:
             rewards = reward_fn.get_rewards(agents, state, is_terminated, is_truncated, shared_info)
             for agent, reward in rewards.items():
-                combined_rewards[agent] += reward
+                combined_rewards[agent] += reward * reward_fn.weight
 
         return combined_rewards
