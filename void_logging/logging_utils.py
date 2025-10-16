@@ -1,4 +1,9 @@
 import math
+from typing import Any
+
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
 
 REWARDS_HEADER = "Rewards"
 METRICS_HEADER = "Metrics"
@@ -59,3 +64,25 @@ def nest_dict(flat_dict, total_first=True):
         else:
             current[last] = value
     return nested
+
+console = Console()
+
+def _build_table(data, title=None):
+    """Build a compact table for one section of metrics."""
+    table = Table(title=title, expand=False, box=None, show_header=False)
+    table.add_column("Metric", style="cyan", no_wrap=True)
+    table.add_column("Value", style="magenta", justify="right", no_wrap=True)
+
+    for k, v in data.items():
+        val = f"{v:.6f}" if isinstance(v, float) else str(v)
+        table.add_row(k, val)
+
+    return table
+
+
+def print_metrics(data):
+    """Print all sections as stacked panels."""
+    panels = []
+    for section, values in data.items():
+        panels.append(Panel(_build_table(values, title=None), title=section, expand=False))
+    console.print(*panels, sep="\n")

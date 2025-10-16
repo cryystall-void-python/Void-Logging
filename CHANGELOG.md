@@ -7,11 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.3]
+
+### Added
+
+- `MultiLogger` -> Allows you to have multiple metric loggers inside one logger + prettier print for all metrics
+
 ### Fixed
 
+- If the metric logger can't find any player / state related metrics, it will not die but rather log nothing
 - `LoggedCombinedReward` was not accounting for the weight in the agent's reward (but was accounting it for the logs), leading to reward logs being wrong
 
-## [0.2.2]
+## [0.2.2] - 2025-09-28
 
 ### Changed
 

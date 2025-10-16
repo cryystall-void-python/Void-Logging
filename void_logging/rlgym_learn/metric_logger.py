@@ -59,8 +59,8 @@ class CustomMetricLogger(DictMetricsLogger[
         for shared_info in data:
             metrics_info: dict[str, Any] = shared_info[METRICS_HEADER]
 
-            player_metrics: dict[str, dict[str, float]] = metrics_info.pop(PLAYERS_METRICS_HEADER)
-            state_metrics: dict[str, int | float] = metrics_info.pop(STATE_METRICS_HEADER)
+            player_metrics: dict[str, dict[str, float]] = metrics_info.pop(PLAYERS_METRICS_HEADER, {})
+            state_metrics: dict[str, int | float] = metrics_info.pop(STATE_METRICS_HEADER, {})
 
             for metric, agent_metrics_data in player_metrics.items():
                 for agent, value in agent_metrics_data.items():
