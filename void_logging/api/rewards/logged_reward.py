@@ -32,9 +32,16 @@ class LoggedReward(RewardFunction, ABC):
             if display_name == "__temp":
                 continue
 
+            try:
+                value = self.reward.get_value_for_player(
+                    agent_id, metric
+                ) * self.weight
+            except AttributeError as _:
+                value = None
+
             log_values.setdefault(
                 self.name + ("" if display_name.strip() == "" else "/" + display_name),
-                self.reward.get_value_for_player(agent_id, metric) * self.weight
+                value
             )
 
         return log_values

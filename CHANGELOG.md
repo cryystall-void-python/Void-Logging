@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `PlayerOnGroundRatioMetricSharedInfoProvider` to get the ratio of the agent being on ground
+- `GoalScoreSpeedSharedInfoProvider` to get the average goal score speed
+- `PlayerBallHitHeightMetricSharedInfoProvider` to get the average ball hit height
+
+### Fixed
+
+- Add `PlayerOnGroundRatioMetricSharedInfoProvider` to the API
+- Allow logged rewards to only have one player triggering a log
+
 ## [0.2.3]
 
 ### Added

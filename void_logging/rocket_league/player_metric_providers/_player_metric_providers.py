@@ -107,3 +107,21 @@ class PlayerBallHitForceMetricSharedInfoProvider(PlayerMetricSharedInfoProvider)
             self._last_tick_count = state.tick_count
 
             return float(np.linalg.norm(_ball_accel))
+
+class PlayerOnGroundRatioMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
+    @property
+    def metric_name(self) -> str:
+        return "Player/On ground"
+
+    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+        return state.cars[agent].on_ground
+
+class PlayerBallHitHeightMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
+    @property
+    def metric_name(self) -> str:
+        return "Player/Hit height"
+
+    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+        if state.cars[agent].ball_touches > 0:
+            return float(state.ball.position[2])
+        return None

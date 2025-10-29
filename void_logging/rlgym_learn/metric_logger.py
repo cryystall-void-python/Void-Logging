@@ -19,7 +19,7 @@ custom_metrics_serde = lambda: PyAnySerdeType.TYPEDDICT(
             keys_serde_type=PyAnySerdeType.STRING(),
             values_serde_type=PyAnySerdeType.DICT(
                 keys_serde_type=PyAnySerdeType.STRING(),
-                values_serde_type=PyAnySerdeType.FLOAT()
+                values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT())
             )
         ),
         STATE_METRICS_HEADER: PyAnySerdeType.DICT(
