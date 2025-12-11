@@ -5,7 +5,13 @@ from rlgym_learn import PyAnySerdeType
 from rlgym_learn_algos.logging import MetricsLoggerConfig
 from rlgym_learn_algos.logging.dict_metrics_logger import DictMetricsLogger
 
-from void_logging.logging_utils import AvgTracker, METRICS_HEADER, PLAYERS_METRICS_HEADER, STATE_METRICS_HEADER
+from void_logging.logging_utils import (
+    AvgTracker,
+    METRICS_HEADER,
+    PLAYERS_METRICS_HEADER,
+    STATE_METRICS_HEADER,
+)
+
 
 def get_serde_type(value: Any) -> int:
     if isinstance(value, int):
@@ -13,31 +19,29 @@ def get_serde_type(value: Any) -> int:
     elif isinstance(value, float):
         return 1
 
+
 custom_metrics_serde = lambda: PyAnySerdeType.TYPEDDICT(
     key_serde_type_dict={
         PLAYERS_METRICS_HEADER: PyAnySerdeType.DICT(
             keys_serde_type=PyAnySerdeType.STRING(),
             values_serde_type=PyAnySerdeType.DICT(
                 keys_serde_type=PyAnySerdeType.STRING(),
-                values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT())
-            )
+                values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT()),
+            ),
         ),
         STATE_METRICS_HEADER: PyAnySerdeType.DICT(
             keys_serde_type=PyAnySerdeType.STRING(),
-            values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT())
-        )
+            values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT()),
+        ),
     }
 )
+
 
 class CustomMetricLoggerModelConfig(BaseModel, extra="forbid"):
     pass
 
 
-class CustomMetricLogger(DictMetricsLogger[
-        CustomMetricLoggerModelConfig,
-        None,
-        None
-    ]):
+class CustomMetricLogger(DictMetricsLogger[CustomMetricLoggerModelConfig, None, None]):
     def __init__(self):
         self.env_metrics = {}
 
@@ -59,8 +63,12 @@ class CustomMetricLogger(DictMetricsLogger[
         for shared_info in data:
             metrics_info: dict[str, Any] = shared_info[METRICS_HEADER]
 
-            player_metrics: dict[str, dict[str, float]] = metrics_info.pop(PLAYERS_METRICS_HEADER, {})
-            state_metrics: dict[str, int | float] = metrics_info.pop(STATE_METRICS_HEADER, {})
+            player_metrics: dict[str, dict[str, float]] = metrics_info.pop(
+                PLAYERS_METRICS_HEADER, {}
+            )
+            state_metrics: dict[str, int | float] = metrics_info.pop(
+                STATE_METRICS_HEADER, {}
+            )
 
             for metric, agent_metrics_data in player_metrics.items():
                 for agent, value in agent_metrics_data.items():
@@ -78,9 +86,7 @@ class CustomMetricLogger(DictMetricsLogger[
         metrics.setdefault(METRICS_HEADER, {})
 
         for metric, tracker in trackers.items():
-            metrics[METRICS_HEADER].setdefault(
-                metric, tracker.get_avg()
-            )
+            metrics[METRICS_HEADER].setdefault(metric, tracker.get_avg())
 
         self.env_metrics = metrics
 

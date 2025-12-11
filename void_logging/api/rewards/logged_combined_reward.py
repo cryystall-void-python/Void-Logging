@@ -1,52 +1,67 @@
-from typing import List, Dict, Any, NamedTuple
+from typing import List, Dict, Any
 
-from rlgym.api import AgentID, RewardFunction
-from rlgym.rocket_league.api import GameState
+from rlgym.api import AgentID, StateType, RewardType
+from void_logging.api.rewards.log import SEPARATOR
 
-from ..rewards import LoggedReward
-from ..._internal.logged_wrapper import LoggedWrapper
+from .log import Log
+from .logged_float import Logged
+from .logged_reward import LoggedReward
 
-class LoggedCombinedRewardArg(NamedTuple):
-    reward_fn: RewardFunction
-    name: str = ""
-    weight: float = 1.0
 
 class LoggedCombinedReward(LoggedReward):
-    def __init__(self, *rewards_and_weights: LoggedCombinedRewardArg, name: str = "Logged combined reward", weight: float = 1.0):
+    @property
+    def name(self) -> str:
+        return "Logged combined reward"
+
+    def __init__(self, *rewards_and_weights: LoggedReward):
         """
         :param rewards_and_weights: A list of reward functions and their corresponding weights.
         """
-        super().__init__(name, weight)
-        reward_fns: List[LoggedReward] = []
+        self._reward_fns: List[LoggedReward] = list(rewards_and_weights)
 
-        for value in rewards_and_weights:
-            if not issubclass(type(value[0]), LoggedReward):
-                r = LoggedWrapper(
-                    value[0],
-                    self.name +  "/" + type(value[0]).__name__ if value[1].strip() == "" else value[1],
-                    self.weight * value[2]
-                )
-            else:
-                r = value[0]
-                r.weight *= self.weight * value[2]
-                r.name = self.name + "/" + (value[1] if value[1].strip() != "" else r.name)
+    @property
+    def reward_functions(self) -> List[LoggedReward]:
+        """
+        All the reward functions of the combined reward
+        :return: All the reward functions of the combined reward
+        """
+        return self._reward_fns
 
-            reward_fns.append(r)
+    def get_rewards(
+        self,
+        agents: List[AgentID],
+        state: StateType,
+        is_terminated: Dict[AgentID, bool],
+        is_truncated: Dict[AgentID, bool],
+        shared_info: Dict[str, Any],
+    ) -> Dict[AgentID, RewardType]:
+        rewards = {agent: Logged() for agent in agents}
 
-        self.reward_fns = tuple(reward_fns)
+        for reward_fn in self.reward_functions:
+            _inner_rewards = reward_fn.get_rewards(
+                agents, state, is_terminated, is_truncated, shared_info
+            )
+            for agent, reward in _inner_rewards.items():
+                rewards[agent] += Log(metric=reward_fn.name, value=reward)
 
-    def reset(self, agents: List[AgentID], initial_state: GameState, shared_info: Dict[str, Any]) -> None:
-        super().reset(agents, initial_state, shared_info)
-        for reward_fn in self.reward_fns:
+        return rewards
+
+    def reset(
+        self,
+        agents: List[AgentID],
+        initial_state: StateType,
+        shared_info: Dict[str, Any],
+    ) -> None:
+        for reward_fn in self.reward_functions:
             reward_fn.reset(agents, initial_state, shared_info)
 
-    def get_rewards(self, agents: List[AgentID], state: GameState, is_terminated: Dict[AgentID, bool],
-                    is_truncated: Dict[AgentID, bool], shared_info: Dict[str, Any]) -> Dict[AgentID, float]:
-        # TODO optimize this double for loop with a numpy matrix?
-        combined_rewards = {agent: 0. for agent in agents}
-        for reward_fn in self.reward_fns:
-            rewards = reward_fn.get_rewards(agents, state, is_terminated, is_truncated, shared_info)
-            for agent, reward in rewards.items():
-                combined_rewards[agent] += reward * reward_fn.weight
+    @property
+    def metrics(self) -> list[str]:
+        _metrics = []
+        for reward_fn in self.reward_functions:
+            _metrics += [
+                reward_fn.name + SEPARATOR + metric for metric in reward_fn.metrics
+            ]
+            _metrics.append(reward_fn.name)
 
-        return combined_rewards
+        return _metrics

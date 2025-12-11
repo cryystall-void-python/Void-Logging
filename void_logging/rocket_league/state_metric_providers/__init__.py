@@ -1,3 +1,11 @@
-from ._state_metric_providers import GoalMetricSharedInfoProvider, EpisodeLengthSharedInfoProvider, GoalScoreSpeedSharedInfoProvider
+from ._state_metric_providers import (
+    GoalMetricSharedInfoProvider,
+    EpisodeLengthSharedInfoProvider,
+    GoalScoreSpeedSharedInfoProvider,
+)
 
-__all__ = ["GoalMetricSharedInfoProvider", "EpisodeLengthSharedInfoProvider", "GoalScoreSpeedSharedInfoProvider"]
+__all__ = [
+    "GoalMetricSharedInfoProvider",
+    "EpisodeLengthSharedInfoProvider",
+    "GoalScoreSpeedSharedInfoProvider",
+]

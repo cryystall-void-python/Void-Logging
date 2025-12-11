@@ -7,16 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0]
+
 ### Added
 
+- You can now specify in advance the metrics of the reward in the `metrics` property
 - `PlayerOnGroundRatioMetricSharedInfoProvider` to get the ratio of the agent being on ground
 - `GoalScoreSpeedSharedInfoProvider` to get the average goal score speed
 - `PlayerBallHitHeightMetricSharedInfoProvider` to get the average ball hit height
+- Added a bunch of wrappers that can be chained instead of the `LoggedCombinedRewardArg`
+  - `RewardFnWrapper` to manually transform a "normal" reward function into a logged one
+  - `DefaultIfNoneWrapper` to return a certain value in case the reward function returns None (doesn't trigger any metric), returns 0 by default
+  - `WeightedWrapper` to weight the result of a reward
+  - `ZeroSumWrapper` to transform a logged reward into a zero summed logged reward
+  - `ConditionWrapper` to trigger a reward only if the agent respects a given condition
+  - `CustomNameWrapper` to give a custom name to the reward
+  - `ChainWrapper` to be able to use chain function such as `.zero_sum()`, `.weight()`, etc. Making multi-wrappers operations easier
+  - `FillMetricsWrapper` to fill each metric (within the `metrics` property) value with 0 to mimic an empty pass
+  - `DebugWrapper` to print the metric in a tree-shape output
+  - `TestWrapper` to check whether the reward is "valid" (correct amount of outputs, sum check)
+  - `ApplyOperationWrapper` to apply an operation after computing the reward
 
 ### Fixed
 
 - Add `PlayerOnGroundRatioMetricSharedInfoProvider` to the API
 - Allow logged rewards to only have one player triggering a log
+
+### Changed
+
+- Renamed `RewardLogger` to `RewardMetricsLogger`
+- Reworked the Logged reward to not need to compute and prepare the logging, this allows more control for wrappers
+- Moved `LoggedWrapper` to the API instead of internal use to allow users to use it
+- Renamed `LoggedWrapper` to `RewardFnWrapper` to reflect its actual job
+
+### Removed
+
+- Removed `LoggedCombinedRewardArg`
 
 ## [0.2.3]
 

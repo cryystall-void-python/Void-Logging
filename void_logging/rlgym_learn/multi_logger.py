@@ -3,8 +3,12 @@ from typing import Generic, Dict, Any, List
 
 from pydantic import BaseModel
 from rlgym_learn.api import AgentControllerData
-from rlgym_learn_algos.logging import InnerMetricsLoggerConfig, \
-    InnerMetricsLoggerAdditionalDerivedConfig, DictMetricsLogger, MetricsLoggerConfig
+from rlgym_learn_algos.logging import (
+    InnerMetricsLoggerConfig,
+    InnerMetricsLoggerAdditionalDerivedConfig,
+    DictMetricsLogger,
+    MetricsLoggerConfig,
+)
 
 from ..logging_utils import print_metrics
 
@@ -12,14 +16,14 @@ from ..logging_utils import print_metrics
 class MultiLoggerConfigModel(BaseModel):
     pass
 
+
 @dataclass
 class MultiLoggerAdditionalDerivedConfig(
     Generic[InnerMetricsLoggerConfig, InnerMetricsLoggerAdditionalDerivedConfig]
 ):
     inner_metrics_logger_config: InnerMetricsLoggerConfig = None
-    inner_metrics_logger_additional_derived_config: (
-        InnerMetricsLoggerAdditionalDerivedConfig
-    ) = None
+    inner_metrics_logger_additional_derived_config: InnerMetricsLoggerAdditionalDerivedConfig = None
+
 
 class MultiLogger(
     DictMetricsLogger[
@@ -35,10 +39,7 @@ class MultiLogger(
         AgentControllerData,
     ],
 ):
-    def __init__(
-        self,
-        *inner_metrics_loggers: DictMetricsLogger
-    ):
+    def __init__(self, *inner_metrics_loggers: DictMetricsLogger):
         self.inner_metrics_loggers = inner_metrics_loggers
         self.env_metrics = {}
         self.agent_metrics = {}

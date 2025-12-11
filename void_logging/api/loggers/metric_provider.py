@@ -6,10 +6,13 @@ from rlgym.api import SharedInfoProvider, StateType, AgentID
 from void_logging.logging_utils import METRICS_HEADER
 
 
-class MetricSharedInfoProvider(Generic[AgentID, StateType], SharedInfoProvider[AgentID, StateType], ABC):
+class MetricSharedInfoProvider(
+    Generic[AgentID, StateType], SharedInfoProvider[AgentID, StateType], ABC
+):
     """
     A shared info provider adding stuff in the metrics shared info
     """
+
     @property
     @abstractmethod
     def metric_name(self) -> str:

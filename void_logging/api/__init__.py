@@ -1,3 +1,3 @@
-from . import rewards, loggers
+from . import rewards, loggers, wrappers
 
-__all__ = ["rewards", "loggers"]
+__all__ = ["rewards", "loggers", "wrappers"]

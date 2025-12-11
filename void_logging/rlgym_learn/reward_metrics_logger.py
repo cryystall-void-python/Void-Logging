@@ -3,30 +3,30 @@ from typing import Generic, Dict, Any, List
 from pydantic import BaseModel
 from rlgym_learn import PyAnySerdeType
 from rlgym_learn.api import AgentControllerData
-from rlgym_learn_algos.logging import DictMetricsLogger, InnerMetricsLoggerConfig, \
-    InnerMetricsLoggerAdditionalDerivedConfig, MetricsLoggerConfig
+from rlgym_learn_algos.logging import (
+    DictMetricsLogger,
+    InnerMetricsLoggerConfig,
+    InnerMetricsLoggerAdditionalDerivedConfig,
+    MetricsLoggerConfig,
+)
 
 from ..logging_utils import AvgTracker, REWARDS_HEADER
 
-class RewardLoggerConfigModel(BaseModel, extra="forbid"):
+
+class RewardMetricLoggerConfigModel(BaseModel, extra="forbid"):
     pass
 
 
-reward_logger_serde = PyAnySerdeType.DICT(
+reward_metric_logger_serde = PyAnySerdeType.DICT(
     keys_serde_type=PyAnySerdeType.STRING(),
     values_serde_type=PyAnySerdeType.DICT(
         keys_serde_type=PyAnySerdeType.STRING(),
-        values_serde_type=PyAnySerdeType.FLOAT()
-    )
+        values_serde_type=PyAnySerdeType.FLOAT(),
+    ),
 )
 
-class RewardLogger(
-    DictMetricsLogger[
-        RewardLoggerConfigModel,
-        None,
-        None
-    ]
-):
+
+class RewardMetricsLogger(DictMetricsLogger[RewardMetricLoggerConfigModel, None, None]):
     def __init__(self):
         self.env_metrics = {}
 
@@ -50,11 +50,9 @@ class RewardLogger(
         rewards_metrics.setdefault(REWARDS_HEADER, {})
 
         for metric, tracker in trackers.items():
-            rewards_metrics[REWARDS_HEADER].setdefault(
-                metric, tracker.get_avg()
-            )
+            rewards_metrics[REWARDS_HEADER].setdefault(metric, tracker.get_avg())
 
         self.env_metrics = rewards_metrics
 
     def validate_config(self, config_obj: Dict[str, Any]) -> MetricsLoggerConfig:
-        return RewardLoggerConfigModel.model_validate(config_obj)
+        return RewardMetricLoggerConfigModel.model_validate(config_obj)

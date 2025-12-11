@@ -9,6 +9,7 @@ METRICS_HEADER = "Metrics"
 PLAYERS_METRICS_HEADER = "Players"
 STATE_METRICS_HEADER = "State"
 
+
 class AvgTracker:
     def __init__(self):
         self._value = 0
@@ -26,45 +27,58 @@ class AvgTracker:
         return self._value / self._count
 
 
-def nest_dict(flat_dict, total_first=True):
-    nested = {}
-    for flat_key, value in flat_dict.items():
-        parts = flat_key.split("/")
-        current = nested
-        for part in parts[:-1]:
-            if part not in current:
-                current[part] = {}
-            elif not isinstance(current[part], dict):
-                old_val = current[part]
-                current[part] = {}
-                if total_first:
-                    current[part]["Total"] = old_val
-                else:
-                    current[part] = {**current[part], "Total": old_val}
-            current = current[part]
-        last = parts[-1]
-        if last in current and isinstance(current[last], dict):
-            if total_first:
-                # Move 'Total' to first if exists, else insert
-                if "Total" not in current[last]:
-                    current[last] = {"Total": value, **current[last]}
-                else:
-                    current[last]["Total"] = value
+def nest_dict(flat_dict):
+    """
+    Nest a flat dictionary based on '/' separator.
+    Handles both flat dicts and dicts with agent/team keys.
+    Prioritizes sub-metrics over top-level values.
+    """
+
+    def process_flat_dict(flat):
+        nested = {}
+
+        # First pass: collect all keys and identify which have children
+        keys_with_children = set()
+        for key in flat.keys():
+            if "/" in key:
+                parent = key.split("/")[0]
+                keys_with_children.add(parent)
+
+        # Second pass: build the nested structure
+        for key, value in flat.items():
+            if "/" in key:
+                parts = key.split("/")
+                current = nested
+
+                # Navigate/create nested structure
+                for i, part in enumerate(parts[:-1]):
+                    if part not in current:
+                        current[part] = {}
+                    current = current[part]
+
+                # Set the final value
+                current[parts[-1]] = value
             else:
-                current[last]["Total"] = value
-        elif last in current and not isinstance(current[last], dict):
-            old_val = current[last]
-            current[last] = {}
-            if total_first:
-                current[last]["Total"] = old_val
-                current[last]["Total"] = value
-            else:
-                current[last] = {**current[last], "Total": value}
-        else:
-            current[last] = value
-    return nested
+                # Only add top-level keys if they don't have children
+                if key not in keys_with_children:
+                    nested[key] = value
+
+        return nested
+
+    # Check if this is a nested dict with agent/team keys
+    if flat_dict and all(isinstance(v, dict) for v in flat_dict.values()):
+        # Process each agent/team separately
+        result = {}
+        for agent_key, agent_dict in flat_dict.items():
+            result[agent_key] = process_flat_dict(agent_dict)
+        return result
+    else:
+        # Process as a single flat dict
+        return process_flat_dict(flat_dict)
+
 
 console = Console()
+
 
 def _build_table(data, title=None):
     """Build a compact table for one section of metrics."""
@@ -83,5 +97,7 @@ def print_metrics(data):
     """Print all sections as stacked panels."""
     panels = []
     for section, values in data.items():
-        panels.append(Panel(_build_table(values, title=None), title=section, expand=False))
+        panels.append(
+            Panel(_build_table(values, title=None), title=section, expand=False)
+        )
     console.print(*panels, sep="\n")

@@ -16,7 +16,9 @@ class PlayerVelocityMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
     def metric_name(self) -> str:
         return "Player/Velocity"
 
-    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+    def get_metric_value_for(
+        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+    ) -> float | None:
         return float(np.linalg.norm(state.cars[agent].physics.linear_velocity))
 
 
@@ -29,7 +31,9 @@ class PlayerHeightMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
     def metric_name(self) -> str:
         return "Player/Height"
 
-    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+    def get_metric_value_for(
+        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+    ) -> float | None:
         return float(state.cars[agent].physics.position[2])
 
 
@@ -49,7 +53,9 @@ class PlayerTouchMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
     def metric_name(self) -> str:
         return "Player/Touch"
 
-    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+    def get_metric_value_for(
+        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+    ) -> float | None:
         n_touches = state.cars[agent].ball_touches
 
         # If you want touch ratio (Tendency of bot to touch the ball)
@@ -70,7 +76,9 @@ class PlayerBoostAmountMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
     def metric_name(self) -> str:
         return "Player/Boost amount"
 
-    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+    def get_metric_value_for(
+        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+    ) -> float | None:
         return state.cars[agent].boost_amount
 
 
@@ -89,14 +97,17 @@ class PlayerBallHitForceMetricSharedInfoProvider(PlayerMetricSharedInfoProvider)
         self._last_ball_vel = None
         self._last_tick_count = 0
 
-    def init_metric_value_for(self, agent: AgentID, initial_state: GameState,
-                              shared_info: Dict[str, Any]) -> float | None:
+    def init_metric_value_for(
+        self, agent: AgentID, initial_state: GameState, shared_info: Dict[str, Any]
+    ) -> float | None:
         self._last_ball_vel = initial_state.ball.linear_velocity
         self._last_tick_count = initial_state.tick_count
 
         return None
 
-    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+    def get_metric_value_for(
+        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+    ) -> float | None:
         if state.cars[agent].ball_touches > 0:
             _ball_accel = state.ball.linear_velocity - self._last_ball_vel
             _tick_count = state.tick_count - self._last_tick_count
@@ -108,20 +119,26 @@ class PlayerBallHitForceMetricSharedInfoProvider(PlayerMetricSharedInfoProvider)
 
             return float(np.linalg.norm(_ball_accel))
 
+
 class PlayerOnGroundRatioMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
     @property
     def metric_name(self) -> str:
         return "Player/On ground"
 
-    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+    def get_metric_value_for(
+        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+    ) -> float | None:
         return state.cars[agent].on_ground
+
 
 class PlayerBallHitHeightMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
     @property
     def metric_name(self) -> str:
         return "Player/Hit height"
 
-    def get_metric_value_for(self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]) -> float | None:
+    def get_metric_value_for(
+        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+    ) -> float | None:
         if state.cars[agent].ball_touches > 0:
             return float(state.ball.position[2])
         return None
