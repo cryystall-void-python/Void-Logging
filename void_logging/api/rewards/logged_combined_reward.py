@@ -1,6 +1,8 @@
-from typing import List, Dict, Any
+"""Module for the logged combined reward"""
 
-from rlgym.api import AgentID, StateType, RewardType
+from typing import Generic, List, Dict, Any
+
+from rlgym.api import AgentID, StateType
 from void_logging.api.rewards.log import SEPARATOR
 
 from .log import Log
@@ -8,7 +10,13 @@ from .logged_float import Logged
 from .logged_reward import LoggedReward
 
 
-class LoggedCombinedReward(LoggedReward):
+class LoggedCombinedReward(
+    LoggedReward[AgentID, StateType], Generic[AgentID, StateType]
+):
+    """The logged combined reward is used to store
+    multiple logged rewards and gather
+    them under a single reward"""
+
     @property
     def name(self) -> str:
         return "Logged combined reward"
@@ -34,7 +42,7 @@ class LoggedCombinedReward(LoggedReward):
         is_terminated: Dict[AgentID, bool],
         is_truncated: Dict[AgentID, bool],
         shared_info: Dict[str, Any],
-    ) -> Dict[AgentID, RewardType]:
+    ) -> Dict[AgentID, Logged]:
         rewards = {agent: Logged() for agent in agents}
 
         for reward_fn in self.reward_functions:

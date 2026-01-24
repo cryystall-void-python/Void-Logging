@@ -1,6 +1,8 @@
+"""Module for the reward logger"""
+
 from typing import Generic, Any, List, Dict
 
-from rlgym.api import AgentID, RewardType, StateType, RewardFunction
+from rlgym.api import AgentID, StateType, RewardFunction
 
 from .logged_float import Logged
 from .log import SEPARATOR
@@ -9,9 +11,11 @@ from ...logging_utils import REWARDS_HEADER
 
 
 class RewardLogger(
-    Generic[AgentID, StateType, RewardType],
-    RewardFunction[AgentID, StateType, RewardType],
+    Generic[AgentID, StateType],
+    RewardFunction[AgentID, StateType, float],
 ):
+    """The reward logger is responsible to put the log values inside the shared info"""
+
     def __init__(
         self,
         logged_reward: LoggedReward[AgentID, StateType],
@@ -34,9 +38,12 @@ class RewardLogger(
         )
 
         for agent in agents:
-            rewards[agent] = _inner_rewards[agent].get_value()
+            _inner_reward_value = _inner_rewards[agent].get_value()
+            if _inner_reward_value is None:
+                continue
+            rewards[agent] = _inner_reward_value
 
-        self.log(_inner_rewards, shared_info)
+        self._log(_inner_rewards, shared_info)
 
         return rewards
 
@@ -48,7 +55,7 @@ class RewardLogger(
     ) -> None:
         self._logged_reward.reset(agents, initial_state, shared_info)
 
-    def log(self, logs: dict[AgentID, Logged], shared_info: dict[str, Any]) -> None:
+    def _log(self, logs: dict[AgentID, Logged], shared_info: dict[str, Any]) -> None:
         for agent_id, _logs in logs.items():
             _logs.sanitize()
             _copy_logs = _logs.get_logs().copy()

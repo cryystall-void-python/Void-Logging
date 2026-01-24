@@ -1,13 +1,17 @@
+"""Module for the zerosum wrapper"""
+
 from typing import List, Dict, Any
 
 from rlgym.api import AgentID
 from rlgym.rocket_league.api import GameState
 
 from ..rewards import Logged, Log, LoggedReward
-from ..wrappers import LoggedWrapper
+from ..wrappers.wrapper import LoggedWrapper
 
 
 class ZeroSumWrapper(LoggedWrapper):
+    """A wrapper to zero-sum a reward"""
+
     TEAM_SPIRIT_DISTRIBUTION_METRIC: str = "Team spirit distribution"
     TEAM_SPIRIT_REWARD_METRIC: str = "Team spirit reward"
     OPPONENT_SCALING_METRIC: str = "Opponent scaling"
@@ -20,9 +24,15 @@ class ZeroSumWrapper(LoggedWrapper):
     ):
         """
         A wrapper to zero-sum a reward
-        :param reward_fn: The reward function to zero-sum
-        :param team_spirit: The team spirit distribution amount (the bigger it is, the more team score will matter)
-        :param opp_scaling: The opponent scaling amount (the bigger it is, the more "adversity" it'll create (as well as noise))
+
+        Args:
+            reward_fn (LoggedReward): The reward function to zero-sum
+            team_spirit (float, optional): The team spirit distribution amount
+                (the bigger it is, the more team score will matter).
+                Defaults to 0.0.
+            opp_scaling (float, optional): The opponent scaling amount
+                (the bigger it is, the more "adversity" it'll create (as well as noise)).
+                Defaults to 0.0.
         """
         super().__init__(reward_fn)
 

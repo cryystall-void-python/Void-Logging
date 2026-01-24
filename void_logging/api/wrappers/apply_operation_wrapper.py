@@ -1,15 +1,23 @@
-from typing import Callable, List, Dict, Any
+"""Module for the apply operation wrapper"""
+
+from typing import Callable, Generic, List, Dict, Any
 
 from rlgym.api import AgentID, StateType
 
 from void_logging.api.rewards import LoggedReward, Logged, Log
-from void_logging.api.wrappers import LoggedWrapper
+from void_logging.api.wrappers.wrapper import LoggedWrapper
 
 
-class ApplyOperationWrapper(LoggedWrapper):
+class ApplyOperationWrapper(
+    LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]
+):
+    """A wrapper that applies an operation to the inner reward"""
+
     USER_OPERATION_METRIC: str = "User operation"
 
-    def __init__(self, reward_fn: LoggedReward, operation: Callable[[float], float] = lambda x: x):
+    def __init__(
+        self, reward_fn: LoggedReward, operation: Callable[[float], float] = lambda x: x
+    ):
         super().__init__(reward_fn)
         self._operation = operation
 
@@ -21,11 +29,18 @@ class ApplyOperationWrapper(LoggedWrapper):
         is_truncated: Dict[AgentID, bool],
         shared_info: Dict[str, Any],
     ) -> Dict[AgentID, Logged]:
-        rewards = super().get_rewards(agents, state, is_terminated, is_truncated, shared_info)
+        rewards = super().get_rewards(
+            agents, state, is_terminated, is_truncated, shared_info
+        )
 
         for agent in agents:
-            _transformed_value = self._operation(rewards[agent].get_value())
-            _difference = _transformed_value - rewards[agent].get_value()
+            reward_value = rewards[agent].get_value()
+            assert reward_value is not None, (
+                f"{self.__class__.__name__} expects a value to apply \
+                the operation, but got None"
+            )
+            _transformed_value = self._operation(reward_value)
+            _difference = _transformed_value - reward_value
 
             rewards[agent] += Log(value=_difference, metric=self.USER_OPERATION_METRIC)
 

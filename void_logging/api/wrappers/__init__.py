@@ -1,3 +1,5 @@
+"""API Module for all the wrappers"""
+
 from .wrapper import LoggedWrapper
 from .reward_fn_wrapper import RewardFnWrapper
 from .weighted_wrapper import WeightedWrapper
@@ -23,5 +25,5 @@ __all__ = [
     "ChainWrapper",
     "ApplyOperationWrapper",
     "DebugWrapper",
-    "TestWrapper"
+    "TestWrapper",
 ]

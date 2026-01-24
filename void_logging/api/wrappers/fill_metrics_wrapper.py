@@ -1,12 +1,16 @@
-from typing import List, Dict, Any
+"""Module for the fill metrics wrapper"""
+
+from typing import Generic, List, Dict, Any
 
 from rlgym.api import AgentID, StateType
 
 from void_logging.api.rewards import Logged, Log
-from void_logging.api.wrappers import LoggedWrapper
+from void_logging.api.wrappers.wrapper import LoggedWrapper
 
 
-class FillMetricsWrapper(LoggedWrapper):
+class FillMetricsWrapper(
+    LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]
+):
     """
     A wrapper to trigger the metrics even though they were not triggered
     """

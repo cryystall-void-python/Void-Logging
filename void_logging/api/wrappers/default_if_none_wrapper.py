@@ -1,17 +1,26 @@
-from typing import List, Dict, Any
+"""Module for the default if none wrapper"""
 
-from rlgym.api import AgentID, StateType, RewardType
+from typing import Generic, List, Dict, Any
+
+from rlgym.api import AgentID, StateType
+
+from void_logging.api.rewards.logged_float import Logged
 
 from ..rewards import LoggedReward
-from ..wrappers import LoggedWrapper
+from ..wrappers.wrapper import LoggedWrapper
 
 
-class DefaultIfNoneWrapper(LoggedWrapper):
+class DefaultIfNoneWrapper(
+    LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]
+):
+    """A wrapper to replace a None value with a default value"""
+
     def __init__(self, reward_fn: LoggedReward, default_value: float = 0):
-        """
-        A wrapper to replace a None value with a default value
-        :param reward_fn: The reward function to correct
-        :param default_value: The value to replace None with
+        """A wrapper to replace a None value with a default value
+
+        Args:
+            reward_fn (LoggedReward): The reward function to correct
+            default_value (float, optional): The value to replace None with. Defaults to 0.
         """
         super().__init__(reward_fn)
         self._default_value = default_value
@@ -31,7 +40,7 @@ class DefaultIfNoneWrapper(LoggedWrapper):
         is_terminated: Dict[AgentID, bool],
         is_truncated: Dict[AgentID, bool],
         shared_info: Dict[str, Any],
-    ) -> Dict[AgentID, RewardType]:
+    ) -> Dict[AgentID, Logged]:
         _inner_rewards = super().get_rewards(
             agents, state, is_terminated, is_truncated, shared_info
         )

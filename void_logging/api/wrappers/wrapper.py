@@ -1,12 +1,15 @@
+"""Module for the base logged wrapper class"""
+
 import re
-from typing import List, Dict, Any
+from typing import Generic, List, Dict, Any
 
 from rlgym.api import AgentID, StateType, RewardFunction
 
 from ..rewards import Logged, LoggedReward
 
 
-class LoggedWrapper(LoggedReward):
+class LoggedWrapper(LoggedReward[AgentID, StateType], Generic[AgentID, StateType]):
+    """A wrapper to act on an inner reward"""
     @property
     def name(self) -> str:
         """
@@ -14,7 +17,7 @@ class LoggedWrapper(LoggedReward):
         :return: The final name
         """
         try:
-            return self._reward_fn.name  # noqa Will get caught inside the error if it doesn't exists
+            return self._reward_fn.name  # pyright: ignore[reportAttributeAccessIssue] # noqa Will get caught inside the error if it doesn't exists
         except AttributeError:
             _separated = re.findall("[A-Z][^A-Z]*", type(self._reward_fn).__name__)
             return (
@@ -26,7 +29,9 @@ class LoggedWrapper(LoggedReward):
     def __init__(self, reward_fn: RewardFunction):
         """
         A wrapper to apply an operation on a reward function
-        :param reward_fn: The reward function to work with
+
+        Args:
+            reward_fn (RewardFunction): The reward function to work with
         """
         self._reward_fn = reward_fn
         self._is_reward_fn_logged = isinstance(reward_fn, LoggedReward) or issubclass(
@@ -56,6 +61,6 @@ class LoggedWrapper(LoggedReward):
     @property
     def metrics(self) -> list[str]:
         try:
-            return self._reward_fn.metrics  # noqa If metrics not in the attributes list, return nothing
+            return self._reward_fn.metrics  # pyright: ignore[reportAttributeAccessIssue] # noqa If metrics not in the attributes list, return nothing
         except AttributeError:
             return []

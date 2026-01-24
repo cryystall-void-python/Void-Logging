@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `PlayerBallHitForceMetricSharedInfoProvider` now doesn't throw warnings for invalid values
+
 ## [0.3.0]
 
 ### Added

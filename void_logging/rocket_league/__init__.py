@@ -1,3 +1,5 @@
+"""Module for the rocket league elements of the logging"""
+
 from . import (
     player_metric_providers,
     ball_metric_providers,

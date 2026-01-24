@@ -1,7 +1,9 @@
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Generic
+"""Module for the base metric provider"""
 
-from rlgym.api import SharedInfoProvider, StateType, AgentID
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Generic
+
+from rlgym.api import AgentID, SharedInfoProvider, StateType
 
 from void_logging.logging_utils import METRICS_HEADER
 
@@ -16,7 +18,7 @@ class MetricSharedInfoProvider(
     @property
     @abstractmethod
     def metric_name(self) -> str:
-        pass
+        """Returns the name that will be used to fill the shared info with"""
 
     def create(self, shared_info: Dict[str, Any]) -> Dict[str, Any]:
         if METRICS_HEADER not in shared_info.keys():
