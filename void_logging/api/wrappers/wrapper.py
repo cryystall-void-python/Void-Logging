@@ -30,8 +30,7 @@ class LoggedWrapper(LoggedReward[AgentID, StateType], Generic[AgentID, StateType
         """
         A wrapper to apply an operation on a reward function
 
-        Args:
-            reward_fn (RewardFunction): The reward function to work with
+        :param reward_fn: The reward function to work with
         """
         self._reward_fn = reward_fn
         self._is_reward_fn_logged = isinstance(reward_fn, LoggedReward) or issubclass(

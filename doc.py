@@ -3,14 +3,14 @@ import sys
 from pathlib import Path
 
 
-ARGS_HEADER_RE = re.compile(r"^\s*Args:\s*$")
-RETURNS_HEADER_RE = re.compile(r"^\s*Returns:\s*$")
+ARGS_HEADER_RE = re.compile(r"^(?P<indent>\s*)Args:\s*$")
+RETURNS_HEADER_RE = re.compile(r"^(?P<indent>\s*)Returns:\s*$")
 
 ARG_RE = re.compile(
-    r"^\s{4,}(\w+)\s*(?:\([^)]+\))?:\s*(.*)"
+    r"^(?P<indent>\s+)(?P<name>\w+)\s*(?:\([^)]+\))?:\s*(?P<desc>.*)"
 )
 
-CONTINUATION_RE = re.compile(r"^\s{8,}(.*)")
+CONT_RE = re.compile(r"^(?P<indent>\s+)(?P<text>.+)")
 
 
 def convert_google_to_sphinx(docstring: str) -> str:
@@ -21,33 +21,44 @@ def convert_google_to_sphinx(docstring: str) -> str:
     while i < len(lines):
         line = lines[i]
 
-        # ---- Args ----
-        if ARGS_HEADER_RE.match(line):
+        # ---------- Args ----------
+        args_match = ARGS_HEADER_RE.match(line)
+        if args_match:
+            base_indent = args_match.group("indent")
+            param_indent = base_indent
+            cont_indent = base_indent + " " * 4
             i += 1
+
             while i < len(lines):
-                match = ARG_RE.match(lines[i])
-                if not match:
+                arg_match = ARG_RE.match(lines[i])
+                if not arg_match:
                     break
 
-                name, desc = match.groups()
-                full_desc = desc.strip()
+                name = arg_match.group("name")
+                desc = arg_match.group("desc").strip()
 
+                out.append(f"{param_indent}:param {name}: {desc}")
                 i += 1
+
+                # continuation lines
                 while i < len(lines):
-                    cont = CONTINUATION_RE.match(lines[i])
+                    cont = CONT_RE.match(lines[i])
                     if not cont:
                         break
-                    full_desc += " " + cont.group(1).strip()
-                    i += 1
+                    if len(cont.group("indent")) <= len(arg_match.group("indent")):
+                        break
 
-                out.append(f":param {name}: {full_desc}")
+                    out.append(f"{cont_indent}{cont.group('text').strip()}")
+                    i += 1
             continue
 
-        # ---- Returns ----
-        if RETURNS_HEADER_RE.match(line):
+        # ---------- Returns ----------
+        ret_match = RETURNS_HEADER_RE.match(line)
+        if ret_match:
+            base_indent = ret_match.group("indent")
             i += 1
             if i < len(lines) and lines[i].strip():
-                out.append(f":return: {lines[i].strip()}")
+                out.append(f"{base_indent}:return: {lines[i].strip()}")
                 i += 1
             continue
 

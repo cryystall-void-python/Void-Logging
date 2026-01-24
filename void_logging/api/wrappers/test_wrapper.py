@@ -17,10 +17,9 @@ class TestWrapper(LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]
     def __init__(self, reward_fn: LoggedReward, error_if_none: bool = False):
         """A wrapper to test if a reward is "well-formed"
 
-        Args:
-            reward_fn (LoggedReward): The reward function to test
-            error_if_none (bool, optional): Whether to throw an error
-                if the value is None. Defaults to False.
+        :param reward_fn: The reward function to test
+        :param error_if_none: Whether to throw an error
+            if the value is None. Defaults to False.
         """
         super().__init__(reward_fn)
         self._error_if_none = error_if_none

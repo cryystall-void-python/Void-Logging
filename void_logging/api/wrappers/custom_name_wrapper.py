@@ -11,9 +11,8 @@ class CustomNameWrapper(LoggedWrapper):
     def __init__(self, reward_fn: RewardFunction, name: str):
         """A wrapper to change the name of a reward
 
-        Args:
-            reward_fn (RewardFunction): The reward function to work with
-            name (str): The new name
+        :param reward_fn: The reward function to work with
+        :param name: The new name
         """
         super().__init__(reward_fn)
         self._name = name

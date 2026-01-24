@@ -20,12 +20,11 @@ class WeightedWrapper(LoggedWrapper[AgentID, StateType], Generic[AgentID, StateT
         """
         A class to weight a reward
 
-        Args:
-            reward_fn (LoggedReward): The reward function to weight
-            weight (float, optional): The weight you need to apply. Defaults to 1.0.
-            propagate_to_logs (bool, optional): Whether you want to see the
-                weighted metrics or another field called "Weight" that shows the
-                impact of the weight on the final value. Defaults to True.
+        :param reward_fn: The reward function to weight
+        :param weight: The weight you need to apply. Defaults to 1.0.
+        :param propagate_to_logs: Whether you want to see the
+            weighted metrics or another field called "Weight" that shows the
+            impact of the weight on the final value. Defaults to True.
         """
         super().__init__(reward_fn)
         self.weight = weight

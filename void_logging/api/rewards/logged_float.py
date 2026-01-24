@@ -28,19 +28,16 @@ class Logged(BaseModel, Generic[LoggedKlassType]):
     def get_value(self) -> LoggedKlassType | None:
         """Gets the value currently being stored
 
-        Returns:
-            value (LoggedKlassType | None): The current value
+        :return: value (LoggedKlassType | None): The current value
         """
         return self.value
 
     def get_log_value(self, log_name: str) -> LoggedKlassType | None:
         """Gets the value of a log
 
-        Args:
-            log_name (str): The log you need to get the value of
+        :param log_name: The log you need to get the value of
 
-        Returns:
-            log_value (LoggedKlassType | None): The value of the log
+        :return: log_value (LoggedKlassType | None): The value of the log
         """
         return self.logs.get(log_name)
 
@@ -149,15 +146,13 @@ class Logged(BaseModel, Generic[LoggedKlassType]):
     def apply_operation_to_logs(self, fn: Callable[[LoggedKlassType], LoggedKlassType]):
         """Apply an operation to a log
 
-        Args:
-            fn (Callable[[LoggedKlassType], LoggedKlassType]): The operation to apply
+        :param fn: The operation to apply
         """
         self.logs = {k: fn(v) for k, v in self.logs.items()}
 
     def get_logs(self) -> dict[str, LoggedKlassType]:
         """Gets all the logs
 
-        Returns:
-            logs (dict[str, LoggedKlassType]): All the logs
+        :return: logs (dict[str, LoggedKlassType]): All the logs
         """
         return self.logs

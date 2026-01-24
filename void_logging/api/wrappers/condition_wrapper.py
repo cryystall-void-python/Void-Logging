@@ -20,13 +20,11 @@ class ConditionWrapper(
     ) -> dict[AgentID, bool]:
         """The condition to trigger the reward
 
-        Args:
-            agents (list[AgentID]): All the agents to test
-            state (StateType): The state to test them on
-            shared_info (dict[str, Any]): The environment's shared info
+        :param agents: All the agents to test
+        :param state: The state to test them on
+        :param shared_info: The environment's shared info
 
-        Returns:
-            agent_cond (dict[AgentID, bool]): A dict giving the info of whether an agent
+        :return: agent_cond (dict[AgentID, bool]): A dict giving the info of whether an agent
                 will trigger the reward / triggered the condition
         """
 

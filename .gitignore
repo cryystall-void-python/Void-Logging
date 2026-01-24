@@ -220,3 +220,5 @@ __marimo__/
 void_logging.egg-info/
 .idea/
 tests/
+
+doc.py

@@ -25,14 +25,13 @@ class ZeroSumWrapper(LoggedWrapper):
         """
         A wrapper to zero-sum a reward
 
-        Args:
-            reward_fn (LoggedReward): The reward function to zero-sum
-            team_spirit (float, optional): The team spirit distribution amount
-                (the bigger it is, the more team score will matter).
-                Defaults to 0.0.
-            opp_scaling (float, optional): The opponent scaling amount
-                (the bigger it is, the more "adversity" it'll create (as well as noise)).
-                Defaults to 0.0.
+        :param reward_fn: The reward function to zero-sum
+        :param team_spirit: The team spirit distribution amount
+            (the bigger it is, the more team score will matter).
+            Defaults to 0.0.
+        :param opp_scaling: The opponent scaling amount
+            (the bigger it is, the more "adversity" it'll create (as well as noise)).
+            Defaults to 0.0.
         """
         super().__init__(reward_fn)
 

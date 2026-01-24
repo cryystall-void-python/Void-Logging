@@ -18,9 +18,8 @@ class DefaultIfNoneWrapper(
     def __init__(self, reward_fn: LoggedReward, default_value: float = 0):
         """A wrapper to replace a None value with a default value
 
-        Args:
-            reward_fn (LoggedReward): The reward function to correct
-            default_value (float, optional): The value to replace None with. Defaults to 0.
+        :param reward_fn: The reward function to correct
+        :param default_value: The value to replace None with. Defaults to 0.
         """
         super().__init__(reward_fn)
         self._default_value = default_value
