@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 26-01-2026
+
 ### Changed
 
 - The `Logged` class is not a Generic anymore and can't be templated anymore
