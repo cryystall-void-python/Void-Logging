@@ -17,9 +17,11 @@ class LoggedCombinedReward(
     multiple logged rewards and gather
     them under a single reward"""
 
+    NAME: str = "Logged combined reward"
+
     @property
     def name(self) -> str:
-        return "Logged combined reward"
+        return LoggedCombinedReward.NAME
 
     def __init__(self, *rewards_and_weights: LoggedReward):
         """

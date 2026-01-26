@@ -219,4 +219,3 @@ __marimo__/
 *.iml
 void_logging.egg-info/
 .idea/
-tests/

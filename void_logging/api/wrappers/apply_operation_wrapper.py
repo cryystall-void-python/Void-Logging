@@ -16,7 +16,7 @@ class ApplyOperationWrapper(
     USER_OPERATION_METRIC: str = "User operation"
 
     def __init__(
-        self, reward_fn: LoggedReward, operation: Callable[[float], float] = lambda x: x
+        self, reward_fn: LoggedReward, operation: Callable[[Any], Any] = lambda x: x
     ):
         super().__init__(reward_fn)
         self._operation = operation

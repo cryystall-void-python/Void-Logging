@@ -10,6 +10,7 @@ from ..rewards import Logged, LoggedReward
 
 class LoggedWrapper(LoggedReward[AgentID, StateType], Generic[AgentID, StateType]):
     """A wrapper to act on an inner reward"""
+
     @property
     def name(self) -> str:
         """

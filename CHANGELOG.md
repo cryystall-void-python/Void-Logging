@@ -7,9 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The `Logged` class is not a Generic anymore and can't be templated anymore
+- The `DefaultIfNoneWrapper` constructor now accepts any type instead of just float, still defaults to 0
+
 ### Fixed
 
 - `PlayerBallHitForceMetricSharedInfoProvider` now doesn't throw warnings for invalid values
+- The division of the `Logged` class was broken (essentially adding instead of substracting), this is now fixed
+- The `FillMetricsWrapper` was also rewriting existing metrics, which was not intended
 
 ## [0.3.0]
 

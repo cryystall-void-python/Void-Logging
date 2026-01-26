@@ -1,6 +1,6 @@
 """Module for the chain wrapper"""
 
-from typing import Self, Callable
+from typing import Any, Self, Callable
 
 from void_logging.api.wrappers.apply_operation_wrapper import ApplyOperationWrapper
 from void_logging.api.wrappers.custom_name_wrapper import CustomNameWrapper
@@ -59,7 +59,7 @@ class ChainWrapper(LoggedWrapper):
         self._reward_fn = CustomNameWrapper(self._reward_fn, name)
         return self
 
-    def fill_metrics(self) -> Self:
+    def fill_metrics(self, fill_value: Any) -> Self:
         """Fills the metrics of the reward using the self.metrics attribute of said reward
 
         :return: itself (Self): Itself
@@ -67,10 +67,10 @@ class ChainWrapper(LoggedWrapper):
         assert self._is_reward_fn_logged, (
             "Reward needs to be logged to fill its metrics"
         )
-        self._reward_fn = FillMetricsWrapper(self._reward_fn)
+        self._reward_fn = FillMetricsWrapper(self._reward_fn, fill_value)
         return self
 
-    def default_if_none(self, default_value: float = 0.0) -> Self:
+    def default_if_none(self, default_value: Any = 0.0) -> Self:
         """Sets a default value in case None is received
 
         :param default_value: Said default value. Defaults to 0.0.
@@ -92,9 +92,7 @@ class ChainWrapper(LoggedWrapper):
         self._is_reward_fn_logged = True
         return self
 
-    def apply_operation(
-        self, operation: Callable[[float], float] = lambda x: x
-    ) -> Self:
+    def apply_operation(self, operation: Callable[[Any], Any] = lambda x: x) -> Self:
         """Applies an operation to the value of the reward
 
         :param operation: The operation to apply. Defaults to lambda x: x.

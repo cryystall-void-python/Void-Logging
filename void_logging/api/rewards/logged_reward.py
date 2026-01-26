@@ -18,10 +18,10 @@ class LoggedReward(
     @abstractmethod
     def name(self) -> str:
         """Returns the name of the reward function
-        that will appear in the logging
-        (unless using a specific wrapper)
+                that will appear in the logging
+                (unless using a specific wrapper)
 
-:return: name (str): Name of the reward function
+        :return: name (str): Name of the reward function
         """
 
     @property

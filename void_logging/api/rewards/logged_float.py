@@ -1,20 +1,18 @@
 """Module for the Logged class"""
 
 from collections.abc import Callable
-from typing import Generic
+from typing import Any
 
 from pydantic import BaseModel
-from typing_extensions import TypeVar
 
 from .log import Log, SEPARATOR
 
-LoggedKlassType = TypeVar("LoggedKlassType", default=float)
 
-
-class Logged(BaseModel, Generic[LoggedKlassType]):
+class Logged(BaseModel):
     """A class used to track the evolution of a value by using the Log class"""
-    logs: dict[str, LoggedKlassType] = {}
-    value: LoggedKlassType | None = None
+
+    logs: dict[str, Any] = {}
+    value: Any | None = None
 
     def __del__(self):
         self.logs.clear()
@@ -25,19 +23,19 @@ class Logged(BaseModel, Generic[LoggedKlassType]):
             if self.logs[_key] is None:
                 self.logs.pop(_key)
 
-    def get_value(self) -> LoggedKlassType | None:
+    def get_value(self) -> Any | None:
         """Gets the value currently being stored
 
-        :return: value (LoggedKlassType | None): The current value
+        :return value: The current value
         """
         return self.value
 
-    def get_log_value(self, log_name: str) -> LoggedKlassType | None:
+    def get_log_value(self, log_name: str) -> Any | None:
         """Gets the value of a log
 
         :param log_name: The log you need to get the value of
 
-        :return: log_value (LoggedKlassType | None): The value of the log
+        :return log_value: The value of the log
         """
         return self.logs.get(log_name)
 
@@ -60,16 +58,14 @@ class Logged(BaseModel, Generic[LoggedKlassType]):
                 if _modified_metric not in self.logs.keys():
                     self.logs[_modified_metric] = log.value.get_log_value(_metric)
                 else:
-                    self.logs[_modified_metric] = self.logs.get(
+                    self.logs[_modified_metric] = self.logs[
                         _modified_metric
-                    ) + log.value.get_log_value(_metric)
+                    ] + log.value.get_log_value(_metric)
 
             if log.metric not in self.logs.keys():
                 self.logs[log.metric] = log.value.get_value()
             else:
-                self.logs[log.metric] = (
-                    self.logs.get(log.metric) + log.value.get_value()
-                )
+                self.logs[log.metric] = self.logs[log.metric] + log.value.get_value()
 
             if not self.value:
                 self.value = log.value.get_value()
@@ -103,16 +99,14 @@ class Logged(BaseModel, Generic[LoggedKlassType]):
                 if _modified_metric not in self.logs.keys():
                     self.logs[_modified_metric] = -log.value.get_log_value(_metric)
                 else:
-                    self.logs[_modified_metric] = self.logs.get(
+                    self.logs[_modified_metric] = self.logs[
                         _modified_metric
-                    ) - log.value.get_log_value(_metric)
+                    ] - log.value.get_log_value(_metric)
 
             if log.metric not in self.logs.keys():
                 self.logs[log.metric] = log.value.get_value()
             else:
-                self.logs[log.metric] = (
-                    self.logs.get(log.metric) + log.value.get_value()
-                )
+                self.logs[log.metric] = self.logs[log.metric] + log.value.get_value()
 
             if not self.value:
                 self.value = -log.value.get_value()
@@ -141,18 +135,18 @@ class Logged(BaseModel, Generic[LoggedKlassType]):
 
         result = self.get_value() / log.value
         diff = result - self.get_value()
-        return self.__isub__(Log(value=diff, metric=log.metric))
+        return self.__iadd__(Log(value=diff, metric=log.metric))
 
-    def apply_operation_to_logs(self, fn: Callable[[LoggedKlassType], LoggedKlassType]):
+    def apply_operation_to_logs(self, fn: Callable[[Any], Any]):
         """Apply an operation to a log
 
         :param fn: The operation to apply
         """
         self.logs = {k: fn(v) for k, v in self.logs.items()}
 
-    def get_logs(self) -> dict[str, LoggedKlassType]:
+    def get_logs(self) -> dict[str, Any]:
         """Gets all the logs
 
-        :return: logs (dict[str, LoggedKlassType]): All the logs
+        :return: logs (dict[str, Any]): All the logs
         """
         return self.logs

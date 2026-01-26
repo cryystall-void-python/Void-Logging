@@ -2,7 +2,7 @@
 
 from rlgym.api import RewardFunction
 
-from ..wrappers import LoggedWrapper
+from ..wrappers.wrapper import LoggedWrapper
 
 
 class CustomNameWrapper(LoggedWrapper):
