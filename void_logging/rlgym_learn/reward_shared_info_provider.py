@@ -1,11 +1,18 @@
-from typing import List, Dict, Any
+"""Module for the reward shared info provider"""
+
+from typing import Generic, List, Dict, Any
 
 from rlgym.api import SharedInfoProvider, AgentID, StateType
 
 from ..logging_utils import REWARDS_HEADER
 
 
-class RewardSharedInfoProvider(SharedInfoProvider):
+class RewardSharedInfoProvider(
+    SharedInfoProvider[AgentID, StateType], Generic[AgentID, StateType]
+):
+    """This class is used to create a dictionary
+    within shared_info[REWARDS_HEADER] with each agent within"""
+
     def create(self, shared_info: Dict[str, Any]) -> Dict[str, Any]:
         if REWARDS_HEADER not in shared_info:
             shared_info[REWARDS_HEADER] = {}

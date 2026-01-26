@@ -1,3 +1,5 @@
+"""Module for all the player metric providers"""
+
 from ._player_metric_providers import (
     PlayerVelocityMetricSharedInfoProvider,
     PlayerBoostAmountMetricSharedInfoProvider,

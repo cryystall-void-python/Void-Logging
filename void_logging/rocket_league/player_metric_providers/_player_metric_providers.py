@@ -1,10 +1,12 @@
-from typing import Dict, Any
+"""Module for all the player metric providers"""
 
-from rlgym.api import AgentID
+from collections.abc import Hashable
+from typing import Dict, Any
+import numpy as np
+
 from rlgym.rocket_league.api import GameState
 
 from ...rocket_league.metric_providers import PlayerMetricSharedInfoProvider
-import numpy as np
 
 
 class PlayerVelocityMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
@@ -17,7 +19,7 @@ class PlayerVelocityMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
         return "Player/Velocity"
 
     def get_metric_value_for(
-        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         return float(np.linalg.norm(state.cars[agent].physics.linear_velocity))
 
@@ -32,7 +34,7 @@ class PlayerHeightMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
         return "Player/Height"
 
     def get_metric_value_for(
-        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         return float(state.cars[agent].physics.position[2])
 
@@ -54,7 +56,7 @@ class PlayerTouchMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
         return "Player/Touch"
 
     def get_metric_value_for(
-        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         n_touches = state.cars[agent].ball_touches
 
@@ -65,6 +67,7 @@ class PlayerTouchMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
         # If you want the amount of touches
         if n_touches > 0:
             return float(n_touches)
+        return None
 
 
 class PlayerBoostAmountMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
@@ -77,7 +80,7 @@ class PlayerBoostAmountMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
         return "Player/Boost amount"
 
     def get_metric_value_for(
-        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         return state.cars[agent].boost_amount
 
@@ -98,46 +101,49 @@ class PlayerBallHitForceMetricSharedInfoProvider(PlayerMetricSharedInfoProvider)
         self._last_tick_count = 0
 
     def init_metric_value_for(
-        self, agent: AgentID, initial_state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, initial_state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         self._last_ball_vel = initial_state.ball.linear_velocity
         self._last_tick_count = initial_state.tick_count
 
-        return None
-
     def get_metric_value_for(
-        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         if state.cars[agent].ball_touches > 0:
             _ball_accel = state.ball.linear_velocity - self._last_ball_vel
-            _tick_count = state.tick_count - self._last_tick_count
+            _tick_count = max(1, state.tick_count - self._last_tick_count)
 
             _ball_accel /= _tick_count
 
             self._last_ball_vel = state.ball.linear_velocity
             self._last_tick_count = state.tick_count
 
-            return float(np.linalg.norm(_ball_accel))
+            return float(np.linalg.norm(_ball_accel + 1e-8))
+        return None
 
 
 class PlayerOnGroundRatioMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
+    """A provider that gives the player on ground ratio"""
+
     @property
     def metric_name(self) -> str:
         return "Player/On ground"
 
     def get_metric_value_for(
-        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         return state.cars[agent].on_ground
 
 
 class PlayerBallHitHeightMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
+    """A provider that gives the player's hit height"""
+
     @property
     def metric_name(self) -> str:
         return "Player/Hit height"
 
     def get_metric_value_for(
-        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         if state.cars[agent].ball_touches > 0:
             return float(state.ball.position[2])

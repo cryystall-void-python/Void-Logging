@@ -1,20 +1,16 @@
-from typing import Generic, Dict, Any, List
+"""Module for the reward metric logger"""
+
+from typing import Dict, Any, List
 
 from pydantic import BaseModel
-from rlgym_learn import PyAnySerdeType
-from rlgym_learn.api import AgentControllerData
-from rlgym_learn_algos.logging import (
-    DictMetricsLogger,
-    InnerMetricsLoggerConfig,
-    InnerMetricsLoggerAdditionalDerivedConfig,
-    MetricsLoggerConfig,
-)
+from rlgym_learn.rlgym_learn import PyAnySerdeType
+from rlgym_learn_algos.logging.dict_metrics_logger import DictMetricsLogger
 
 from ..logging_utils import AvgTracker, REWARDS_HEADER
 
 
 class RewardMetricLoggerConfigModel(BaseModel, extra="forbid"):
-    pass
+    """A fake class to put in case i want to add a config to that class"""
 
 
 reward_metric_logger_serde = PyAnySerdeType.DICT(
@@ -27,6 +23,9 @@ reward_metric_logger_serde = PyAnySerdeType.DICT(
 
 
 class RewardMetricsLogger(DictMetricsLogger[RewardMetricLoggerConfigModel, None, None]):
+    """Use this class as a logger inside your main to log the
+    elements found in shared_info[REWARD_HEADER]"""
+
     def __init__(self):
         self.env_metrics = {}
 
@@ -43,7 +42,7 @@ class RewardMetricsLogger(DictMetricsLogger[RewardMetricLoggerConfigModel, None,
 
             for _, agent_reward_data in rewards_info.items():
                 for metric, value in agent_reward_data.items():
-                    if metric not in trackers.keys():
+                    if metric not in trackers:
                         trackers.setdefault(metric, AvgTracker())
                     trackers[metric] += float(value)
 
@@ -54,5 +53,7 @@ class RewardMetricsLogger(DictMetricsLogger[RewardMetricLoggerConfigModel, None,
 
         self.env_metrics = rewards_metrics
 
-    def validate_config(self, config_obj: Dict[str, Any]) -> MetricsLoggerConfig:
+    def validate_config(
+        self, config_obj: Dict[str, Any]
+    ) -> RewardMetricLoggerConfigModel:
         return RewardMetricLoggerConfigModel.model_validate(config_obj)

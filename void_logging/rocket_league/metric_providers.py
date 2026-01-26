@@ -1,14 +1,16 @@
-from abc import ABC, abstractmethod
-from typing import Dict, Any, List
+"""Module for the base providers for state and players"""
 
-from rlgym.api import AgentID
+from abc import ABC, abstractmethod
+from collections.abc import Hashable
+from typing import Any, Dict, List
+
 from rlgym.rocket_league.api import GameState
 
-from ..api.loggers import MetricSharedInfoProvider
-from ..logging_utils import METRICS_HEADER, STATE_METRICS_HEADER, PLAYERS_METRICS_HEADER
+from ..api.loggers.metric_provider import MetricSharedInfoProvider
+from ..logging_utils import METRICS_HEADER, PLAYERS_METRICS_HEADER, STATE_METRICS_HEADER
 
 
-class StateMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState], ABC):
+class StateMetricSharedInfoProvider(MetricSharedInfoProvider[Hashable, GameState], ABC):
     """
     A shared info provider specially designed for state metrics (ball speed, scoreboard, etc...)
     """
@@ -27,7 +29,8 @@ class StateMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState]
         self, initial_state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         """
-        Called on the first step of the episode, gets the metric in the initial state, can be used to initialize stuff
+        Called on the first step of the episode, gets the metric in the initial state,
+        can be used to initialize stuff
         :param initial_state: The first state
         :param shared_info: Shared info
         :return: The metric of the state
@@ -44,11 +47,10 @@ class StateMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState]
         :param shared_info: Shared info
         :return: The metric of the state
         """
-        pass
 
     def set_state(
         self,
-        agents: List[AgentID],
+        agents: List[Hashable],
         initial_state: GameState,
         shared_info: Dict[str, Any],
     ) -> Dict[str, Any]:
@@ -58,7 +60,7 @@ class StateMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState]
         return shared_info
 
     def step(
-        self, agents: List[AgentID], state: GameState, shared_info: Dict[str, Any]
+        self, agents: List[Hashable], state: GameState, shared_info: Dict[str, Any]
     ) -> Dict[str, Any]:
         shared_info[METRICS_HEADER][STATE_METRICS_HEADER][self.metric_name] = (
             self.get_metric_value(state, shared_info)
@@ -66,7 +68,11 @@ class StateMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState]
         return shared_info
 
 
-class PlayerMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState], ABC):
+class PlayerMetricSharedInfoProvider(
+    MetricSharedInfoProvider[Hashable, GameState], ABC
+):
+    """A class to create a dict per agent within the METRICS_HEADER dict"""
+
     def create(self, shared_info: Dict[str, Any]) -> Dict[str, Any]:
         if METRICS_HEADER not in shared_info.keys():
             shared_info[METRICS_HEADER] = {}
@@ -79,10 +85,11 @@ class PlayerMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState
         return shared_info
 
     def init_metric_value_for(
-        self, agent: AgentID, initial_state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, initial_state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         """
-        Called on the first step of the episode, gets the metric of a player, can be used to initialize stuff
+        Called on the first step of the episode,
+        gets the metric of a player, can be used to initialize stuff
         :param agent: Agent to get metric value from
         :param initial_state: The first state
         :param shared_info: Shared info
@@ -92,7 +99,7 @@ class PlayerMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState
 
     @abstractmethod
     def get_metric_value_for(
-        self, agent: AgentID, state: GameState, shared_info: Dict[str, Any]
+        self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
         """
         Called on every other step of the episode, gets the metric of a player
@@ -101,11 +108,10 @@ class PlayerMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState
         :param shared_info: Shared info
         :return: The metric of the player
         """
-        pass
 
     def set_state(
         self,
-        agents: List[AgentID],
+        agents: List[Hashable],
         initial_state: GameState,
         shared_info: Dict[str, Any],
     ) -> Dict[str, Any]:
@@ -116,7 +122,7 @@ class PlayerMetricSharedInfoProvider(MetricSharedInfoProvider[AgentID, GameState
         return shared_info
 
     def step(
-        self, agents: List[AgentID], state: GameState, shared_info: Dict[str, Any]
+        self, agents: List[Hashable], state: GameState, shared_info: Dict[str, Any]
     ) -> Dict[str, Any]:
         for agent in agents:
             shared_info[METRICS_HEADER][PLAYERS_METRICS_HEADER][self.metric_name][

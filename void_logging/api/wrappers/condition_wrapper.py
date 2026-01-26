@@ -1,18 +1,32 @@
+"""Module for the condition wrapper"""
+
 from abc import ABC, abstractmethod
-from typing import Any, List, Dict
+from typing import Any, Generic, List, Dict
 
 from rlgym.api import AgentID, StateType
 
 from ..rewards import Logged
-from ..wrappers import LoggedWrapper
+from ..wrappers.wrapper import LoggedWrapper
 
 
-class ConditionWrapper(LoggedWrapper, ABC):
+class ConditionWrapper(
+    LoggedWrapper[AgentID, StateType], ABC, Generic[AgentID, StateType]
+):
+    """A wrapper to only call get_rewards if a condition is respected"""
+
     @abstractmethod
     def condition(
         self, agents: list[AgentID], state: StateType, shared_info: dict[str, Any]
     ) -> dict[AgentID, bool]:
-        pass
+        """The condition to trigger the reward
+
+        :param agents: All the agents to test
+        :param state: The state to test them on
+        :param shared_info: The environment's shared info
+
+        :return: agent_cond (dict[AgentID, bool]): A dict giving the info of whether an agent
+                will trigger the reward / triggered the condition
+        """
 
     def get_rewards(
         self,

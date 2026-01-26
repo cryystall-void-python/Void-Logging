@@ -1,3 +1,5 @@
+"""Module for all the ball metrics providers"""
+
 from typing import Dict, Any
 
 import numpy as np
@@ -7,6 +9,8 @@ from ...rocket_league.metric_providers import StateMetricSharedInfoProvider
 
 
 class BallVelocityMetricSharedInfoProvider(StateMetricSharedInfoProvider):
+    """A provider that gives the ball velocity"""
+
     @property
     def metric_name(self) -> str:
         return "Ball/Velocity"
@@ -18,6 +22,8 @@ class BallVelocityMetricSharedInfoProvider(StateMetricSharedInfoProvider):
 
 
 class BallHeightMetricSharedInfoProvider(StateMetricSharedInfoProvider):
+    """A provider that gives the ball height"""
+
     @property
     def metric_name(self) -> str:
         return "Ball/Height"
@@ -29,6 +35,8 @@ class BallHeightMetricSharedInfoProvider(StateMetricSharedInfoProvider):
 
 
 class BallAccelerationMetricSharedInfoProvider(StateMetricSharedInfoProvider):
+    """A provider that gives the ball acceleration"""
+
     @property
     def metric_name(self) -> str:
         return "Ball/Acceleration"
@@ -65,4 +73,4 @@ class BallAccelerationMetricSharedInfoProvider(StateMetricSharedInfoProvider):
         self._last_velocity = _current_vel
         self._last_tick_count = _current_tick_count
 
-        return _accel
+        return float(_accel)

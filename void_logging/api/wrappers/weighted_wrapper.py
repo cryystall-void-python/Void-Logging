@@ -1,12 +1,16 @@
-from typing import List, Dict, Any
+"""Module for the weighted wrapper"""
 
-from rlgym.api import AgentID, StateType, RewardType
+from typing import Generic, List, Dict, Any
 
-from ..rewards import Log, LoggedReward
-from ..wrappers import LoggedWrapper
+from rlgym.api import AgentID, StateType
+
+from ..rewards import Log, LoggedReward, Logged
+from ..wrappers.wrapper import LoggedWrapper
 
 
-class WeightedWrapper(LoggedWrapper):
+class WeightedWrapper(LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]):
+    """A class to weight a reward"""
+
     def __init__(
         self,
         reward_fn: LoggedReward,
@@ -15,21 +19,16 @@ class WeightedWrapper(LoggedWrapper):
     ):
         """
         A class to weight a reward
+
         :param reward_fn: The reward function to weight
-        :param weight: The weight you need to apply
-        :param propagate_to_logs: Whether you want to see the weighted metrics or another field called "Weight" that shows the impact of the weight on the final value
+        :param weight: The weight you need to apply. Defaults to 1.0.
+        :param propagate_to_logs: Whether you want to see the
+            weighted metrics or another field called "Weight" that shows the
+            impact of the weight on the final value. Defaults to True.
         """
         super().__init__(reward_fn)
-        self._weight = weight
-        self._propagate_to_logs = propagate_to_logs
-
-    @property
-    def weight(self):
-        return self._weight
-
-    @property
-    def is_weight_propagated_to_logs(self):
-        return self._propagate_to_logs
+        self.weight = weight
+        self.propagate_to_logs = propagate_to_logs
 
     def get_rewards(
         self,
@@ -38,7 +37,7 @@ class WeightedWrapper(LoggedWrapper):
         is_terminated: Dict[AgentID, bool],
         is_truncated: Dict[AgentID, bool],
         shared_info: Dict[str, Any],
-    ) -> Dict[AgentID, RewardType]:
+    ) -> Dict[AgentID, Logged]:
         _inner_rewards = super().get_rewards(
             agents, state, is_terminated, is_truncated, shared_info
         )
@@ -48,11 +47,13 @@ class WeightedWrapper(LoggedWrapper):
                 f"{self.name} ({self.__class__.__name__}) expects a value but got None"
             )
 
-            if self.is_weight_propagated_to_logs:
+            if self.propagate_to_logs:
                 _inner_rewards[agent].apply_operation_to_logs(
                     lambda val: val * self.weight
                 )
-                _inner_rewards[agent].value *= self.weight
+                _inner_rewards[
+                    agent
+                ].value *= self.weight  # TODO: Make a set_value method
             else:
                 _inner_rewards[agent] *= Log(value=self.weight, metric="Weight")
 
@@ -60,6 +61,6 @@ class WeightedWrapper(LoggedWrapper):
 
     @property
     def metrics(self) -> list[str]:
-        if self._propagate_to_logs:
+        if self.propagate_to_logs:
             return super().metrics
         return super().metrics + ["Weight"]

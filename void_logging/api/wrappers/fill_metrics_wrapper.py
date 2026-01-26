@@ -1,15 +1,23 @@
-from typing import List, Dict, Any
+"""Module for the fill metrics wrapper"""
 
-from rlgym.api import AgentID, StateType
+from typing import Generic, List, Dict, Any
+
+from rlgym.api import AgentID, RewardFunction, StateType
 
 from void_logging.api.rewards import Logged, Log
-from void_logging.api.wrappers import LoggedWrapper
+from void_logging.api.wrappers.wrapper import LoggedWrapper
 
 
-class FillMetricsWrapper(LoggedWrapper):
+class FillMetricsWrapper(
+    LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]
+):
     """
     A wrapper to trigger the metrics even though they were not triggered
     """
+
+    def __init__(self, reward_fn: RewardFunction, fill_value: Any):
+        super().__init__(reward_fn)
+        self.fill_value = fill_value
 
     def get_rewards(
         self,
@@ -25,7 +33,8 @@ class FillMetricsWrapper(LoggedWrapper):
 
         for agent in agents:
             for metric in self.metrics:
-                # Populate with empty log
-                rewards[agent] += Log(value=0, metric=metric)
+                if rewards[agent].get_log_value(metric) is None:
+                    # Populate with empty log
+                    rewards[agent] += Log(value=self.fill_value, metric=metric)
 
         return rewards

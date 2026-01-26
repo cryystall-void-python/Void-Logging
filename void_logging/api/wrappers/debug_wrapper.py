@@ -1,15 +1,16 @@
+"""Module for the debug wrapper"""
+
 import copy
-from typing import List, Dict, Any
+from typing import Generic, List, Dict, Any
+
+from rich.tree import Tree
+from rich import print as rprint
 
 from rlgym.api import AgentID, StateType
 
 from ..rewards import Logged, Log
-from ..wrappers import LoggedWrapper
+from ..wrappers.wrapper import LoggedWrapper
 from ...logging_utils import nest_dict
-
-
-from rich.tree import Tree
-from rich import print as rprint
 
 
 def nested_dict_tree(data, *, title="Root") -> Tree:
@@ -53,7 +54,7 @@ def nested_dict_tree(data, *, title="Root") -> Tree:
     return root
 
 
-class DebugWrapper(LoggedWrapper):
+class DebugWrapper(LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]):
     """
     A wrapper to print the components of a reward
     """

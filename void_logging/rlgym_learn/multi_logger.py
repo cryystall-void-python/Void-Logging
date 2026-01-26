@@ -1,28 +1,33 @@
+"""Module for the multi logger"""
+
 from dataclasses import dataclass
 from typing import Generic, Dict, Any, List
 
 from pydantic import BaseModel
-from rlgym_learn.api import AgentControllerData
+from rlgym_learn.api.agent_controller import AgentControllerData
 from rlgym_learn_algos.logging import (
     InnerMetricsLoggerConfig,
     InnerMetricsLoggerAdditionalDerivedConfig,
     DictMetricsLogger,
-    MetricsLoggerConfig,
 )
 
 from ..logging_utils import print_metrics
 
 
 class MultiLoggerConfigModel(BaseModel):
-    pass
+    "A config class for the multi logger in case i want to add config"
 
 
 @dataclass
 class MultiLoggerAdditionalDerivedConfig(
     Generic[InnerMetricsLoggerConfig, InnerMetricsLoggerAdditionalDerivedConfig]
 ):
-    inner_metrics_logger_config: InnerMetricsLoggerConfig = None
-    inner_metrics_logger_additional_derived_config: InnerMetricsLoggerAdditionalDerivedConfig = None
+    """Nah i'm not sure what that class does, but it's what the WandB logger was doing"""
+
+    inner_metrics_logger_config: InnerMetricsLoggerConfig | None = None
+    inner_metrics_logger_additional_derived_config: (
+        InnerMetricsLoggerAdditionalDerivedConfig | None
+    ) = None
 
 
 class MultiLogger(
@@ -39,12 +44,14 @@ class MultiLogger(
         AgentControllerData,
     ],
 ):
+    """A class to log multiple loggers"""
+
     def __init__(self, *inner_metrics_loggers: DictMetricsLogger):
         self.inner_metrics_loggers = inner_metrics_loggers
         self.env_metrics = {}
         self.agent_metrics = {}
 
-    def validate_config(self, config_obj: Dict[str, Any]) -> MetricsLoggerConfig:
+    def validate_config(self, config_obj: Dict[str, Any]) -> MultiLoggerConfigModel:
         return MultiLoggerConfigModel.model_validate(config_obj)
 
     def collect_env_metrics(self, data: List[Dict[str, Any]]):

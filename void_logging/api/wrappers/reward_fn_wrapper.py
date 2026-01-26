@@ -1,24 +1,26 @@
-from typing import List, Dict, Any
+"""Module for the reward function wrapper"""
+
+from typing import Generic, List, Dict, Any
 
 from rlgym.api import AgentID, StateType, RewardFunction
 
 from ..rewards import LoggedReward, Log, Logged
-from ..wrappers import LoggedWrapper
+from ..wrappers.wrapper import LoggedWrapper
 
 
-class RewardFnWrapper(LoggedWrapper):
+class RewardFnWrapper(LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]):
+    """A wrapper that transform a non logged reward to a logged reward"""
+
     REWARD_VALUE_METRIC: str = "Reward value"
 
     def __init__(self, reward_fn: RewardFunction):
-        """
-        A wrapper to transform a reward function to a logged reward function
-        :param reward_fn: The reward function to transform
-        """
         super().__init__(reward_fn)
 
         if issubclass(type(reward_fn), LoggedReward):
             raise ValueError(
-                f"The wrapper {self.__class__.__name__} is meant to be used with the type {RewardFunction.__name__}, you used it with the type {type(reward_fn).__name__}"
+                f"The wrapper {self.__class__.__name__} is meant to be used with \
+                the type {RewardFunction.__name__}, you used it with \
+                the type {type(reward_fn).__name__}"
             )
         self._is_reward_fn_logged = True
 

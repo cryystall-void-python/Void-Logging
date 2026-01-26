@@ -1,3 +1,5 @@
+"""Utilities methods and values for various uses in the package"""
+
 import math
 
 from rich.console import Console
@@ -11,6 +13,8 @@ STATE_METRICS_HEADER = "State"
 
 
 class AvgTracker:
+    """A class to track the average of a value"""
+
     def __init__(self):
         self._value = 0
         self._count = 0
@@ -22,6 +26,7 @@ class AvgTracker:
         return self
 
     def get_avg(self):
+        """Gets the average from the value tracked"""
         if self._count == 0:
             return math.nan
         return self._value / self._count
@@ -51,7 +56,7 @@ def nest_dict(flat_dict):
                 current = nested
 
                 # Navigate/create nested structure
-                for i, part in enumerate(parts[:-1]):
+                for part in parts[:-1]:
                     if part not in current:
                         current[part] = {}
                     current = current[part]
@@ -72,9 +77,8 @@ def nest_dict(flat_dict):
         for agent_key, agent_dict in flat_dict.items():
             result[agent_key] = process_flat_dict(agent_dict)
         return result
-    else:
         # Process as a single flat dict
-        return process_flat_dict(flat_dict)
+    return process_flat_dict(flat_dict)
 
 
 console = Console()
