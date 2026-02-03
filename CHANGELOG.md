@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Some logs had a lot of spaces
+
 ## [0.3.1] - 26-01-2026
 
 ### Changed

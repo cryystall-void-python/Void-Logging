@@ -36,8 +36,8 @@ class ApplyOperationWrapper(
         for agent in agents:
             reward_value = rewards[agent].get_value()
             assert reward_value is not None, (
-                f"{self.__class__.__name__} expects a value to apply \
-                the operation, but got None"
+                f"{self.__class__.__name__} expects a value to apply "
+                + "the operation, but got None"
             )
             _transformed_value = self._operation(reward_value)
             _difference = _transformed_value - reward_value
