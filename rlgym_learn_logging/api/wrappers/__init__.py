@@ -12,6 +12,9 @@ from .chain_wrapper import ChainWrapper
 from .apply_operation_wrapper import ApplyOperationWrapper
 from .debug_wrapper import DebugWrapper
 from .test_wrapper import TestWrapper
+from .logged_combined_reward import LoggedCombinedReward
+
+from .methods import chain, combine
 
 __all__ = [
     "RewardFnWrapper",
@@ -26,4 +29,7 @@ __all__ = [
     "ApplyOperationWrapper",
     "DebugWrapper",
     "TestWrapper",
+    "LoggedCombinedReward",
+    "chain",
+    "combine",
 ]

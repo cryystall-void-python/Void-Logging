@@ -27,7 +27,7 @@ class LoggedWrapper(LoggedReward[AgentID, StateType], Generic[AgentID, StateType
                 else " ".join(_separated)
             )
 
-    def __init__(self, reward_fn: RewardFunction):
+    def __init__(self, reward_fn: RewardFunction[AgentID, StateType, Logged]):
         """
         A wrapper to apply an operation on a reward function
 

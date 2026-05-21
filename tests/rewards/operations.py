@@ -1,11 +1,12 @@
 from typing import Any, Dict, Generic, List
 
 from rlgym.api import AgentID, StateType
+
+from rlgym_learn_logging.api.rewards.log import Log
+from rlgym_learn_logging.api.rewards.logged_float import Logged
+from rlgym_learn_logging.api.rewards.logged_reward import LoggedReward
+from rlgym_learn_logging.logging_utils import REWARDS_HEADER
 from tests.create_env import RLGymUnittestCase, create_env, generate_random_actions
-from void_logging.api.rewards.log import Log
-from void_logging.api.rewards.logged_float import Logged
-from void_logging.api.rewards.logged_reward import LoggedReward
-from void_logging.logging_utils import REWARDS_HEADER
 
 
 class AddTestReward(LoggedReward[AgentID, StateType], Generic[AgentID, StateType]):

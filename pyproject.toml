@@ -3,20 +3,18 @@ requires = ["setuptools>=64.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "void-logging"
-version = "0.3.1"
-description = "Void's logging library"
+name = "rlgym-learn-logging"
+version = "0.4.0"
+description = "A logging library for RLGym and RLGym Learn"
 readme = "README.md"
 authors = [
     { name = "Mathieu Suchet", email = "msuchet63@gmail.com" }
 ]
 license = { file = "LICENSE" }
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
-    "rlgym-learn",
     "rlgym-learn-algos",
-    "rlgym[api]",
-    "rlgym[rocket-league]"
+    "rlgym[rl-sim]"
 ]
 # Optional: define classifiers for PyPI
 classifiers = [
@@ -27,4 +25,4 @@ classifiers = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["void_logging*"]
+include = ["rlgym_learn_logging*"]

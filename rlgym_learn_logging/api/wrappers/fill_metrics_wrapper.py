@@ -1,11 +1,11 @@
 """Module for the fill metrics wrapper"""
 
-from typing import Generic, List, Dict, Any
+from typing import Any, Dict, Generic, List
 
 from rlgym.api import AgentID, RewardFunction, StateType
 
-from void_logging.api.rewards import Logged, Log
-from void_logging.api.wrappers.wrapper import LoggedWrapper
+from rlgym_learn_logging.api.rewards import Log, Logged
+from rlgym_learn_logging.api.wrappers.wrapper import LoggedWrapper
 
 
 class FillMetricsWrapper(

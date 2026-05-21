@@ -1,16 +1,16 @@
 """Module for the metric logger"""
 
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
 from pydantic import BaseModel
 from rlgym_learn.rlgym_learn import PyAnySerdeType
 from rlgym_learn_algos.logging.dict_metrics_logger import DictMetricsLogger
 
-from void_logging.logging_utils import (
-    AvgTracker,
+from rlgym_learn_logging.logging_utils import (
     METRICS_HEADER,
     PLAYERS_METRICS_HEADER,
     STATE_METRICS_HEADER,
+    AvgTracker,
 )
 
 custom_metrics_serde = PyAnySerdeType.TYPEDDICT(

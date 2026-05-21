@@ -49,8 +49,8 @@ class TestWrapper(LoggedWrapper[AgentID, StateType], Generic[AgentID, StateType]
             )
 
             assert math.isclose(_sum, _value, rel_tol=1e-5), (
-                f"The sum of all the logs doesn't match \
-                the total value: (Expected {_value}, got {_sum})"
+                f"The sum of all the logs doesn't match + "
+                f"the total value: (Expected {_value}, got {_sum})"
             )
 
             if self._error_if_none:

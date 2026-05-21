@@ -1,11 +1,11 @@
 """Module for the apply operation wrapper"""
 
-from typing import Callable, Generic, List, Dict, Any
+from typing import Any, Callable, Dict, Generic, List
 
 from rlgym.api import AgentID, StateType
 
-from void_logging.api.rewards import LoggedReward, Logged, Log
-from void_logging.api.wrappers.wrapper import LoggedWrapper
+from rlgym_learn_logging.api.rewards import Log, Logged, LoggedReward
+from rlgym_learn_logging.api.wrappers.wrapper import LoggedWrapper
 
 
 class ApplyOperationWrapper(
@@ -36,8 +36,8 @@ class ApplyOperationWrapper(
         for agent in agents:
             reward_value = rewards[agent].get_value()
             assert reward_value is not None, (
-                f"{self.__class__.__name__} expects a value to apply \
-                the operation, but got None"
+                f"{self.__class__.__name__} expects a value to apply "
+                + "the operation, but got None"
             )
             _transformed_value = self._operation(reward_value)
             _difference = _transformed_value - reward_value

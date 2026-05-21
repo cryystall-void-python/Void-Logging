@@ -62,7 +62,7 @@ class EpisodeLengthSharedInfoProvider(StateMetricSharedInfoProvider):
     def get_metric_value(
         self, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
-        self._episode_length += 1
+        self._episode_length = state.tick_count - self._episode_length
 
 
 class GoalScoreSpeedSharedInfoProvider(StateMetricSharedInfoProvider):

@@ -1,10 +1,10 @@
 """Module for the default if none wrapper"""
 
-from typing import Generic, List, Dict, Any
+from typing import Any, Dict, Generic, List
 
 from rlgym.api import AgentID, StateType
 
-from void_logging.api.rewards.logged_float import Logged
+from rlgym_learn_logging.api.rewards.logged_float import Logged
 
 from ..rewards import LoggedReward
 from ..wrappers.wrapper import LoggedWrapper

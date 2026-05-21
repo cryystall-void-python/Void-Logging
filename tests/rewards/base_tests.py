@@ -1,5 +1,5 @@
+from rlgym_learn_logging.logging_utils import REWARDS_HEADER
 from tests.create_env import DummyReward, RLGymUnittestCase, create_env
-from void_logging.logging_utils import REWARDS_HEADER
 
 
 class BaseTestsCase(RLGymUnittestCase):

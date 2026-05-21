@@ -5,7 +5,7 @@ from typing import Any, Dict, Generic
 
 from rlgym.api import AgentID, SharedInfoProvider, StateType
 
-from void_logging.logging_utils import METRICS_HEADER
+from rlgym_learn_logging.logging_utils import METRICS_HEADER
 
 
 class MetricSharedInfoProvider(
