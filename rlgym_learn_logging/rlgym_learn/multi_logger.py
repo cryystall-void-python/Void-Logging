@@ -7,38 +7,36 @@ from typing import Any, Dict, Generic, List
 from pydantic import BaseModel, ValidationError
 from pydantic import Field as PydField
 from rlgym_learn.api.typing import AgentControllerData
-from rlgym_learn_algos.logging import (
-    DictMetricsLogger,
-    InnerMetricsLoggerAdditionalDerivedConfig,
-    InnerMetricsLoggerConfig,
+from rlgym_learn_algos.logging.dict_metrics_logger import DictMetricsLogger
+from rlgym_learn_algos.logging.metrics_logger import (
+    DerivedMetricsLoggerConfig,
+    MetricsLoggerAdditionalDerivedConfig,
+    MetricsLoggerConfig,
 )
-from rlgym_learn_algos.logging.metrics_logger import DerivedMetricsLoggerConfig
 
 
-class MultiLoggerConfigModel(BaseModel, Generic[InnerMetricsLoggerConfig]):
-    inner_metrics_logger_config: List[InnerMetricsLoggerConfig | None] = PydField(
+class MultiLoggerConfigModel(BaseModel, Generic[MetricsLoggerConfig]):
+    inner_metrics_logger_config: List[MetricsLoggerConfig | None] = PydField(
         default_factory=list
     )
 
 
 @dataclass
-class MultiLoggerAdditionalDerivedConfig(
-    Generic[InnerMetricsLoggerAdditionalDerivedConfig]
-):
+class MultiLoggerAdditionalDerivedConfig(Generic[MetricsLoggerAdditionalDerivedConfig]):
     inner_metrics_logger_additional_derived_config: List[
-        InnerMetricsLoggerAdditionalDerivedConfig | None
+        MetricsLoggerAdditionalDerivedConfig | None
     ] = data_field(default_factory=list)
 
 
 class MultiLogger(
     DictMetricsLogger[
-        MultiLoggerConfigModel[InnerMetricsLoggerConfig],
-        MultiLoggerAdditionalDerivedConfig[InnerMetricsLoggerAdditionalDerivedConfig],
+        MultiLoggerConfigModel[MetricsLoggerConfig],
+        MultiLoggerAdditionalDerivedConfig[MetricsLoggerAdditionalDerivedConfig],
         AgentControllerData,
     ],
     Generic[
-        InnerMetricsLoggerConfig,
-        InnerMetricsLoggerAdditionalDerivedConfig,
+        MetricsLoggerConfig,
+        MetricsLoggerAdditionalDerivedConfig,
         AgentControllerData,
     ],
 ):
@@ -82,10 +80,8 @@ class MultiLogger(
     def load(
         self,
         config: DerivedMetricsLoggerConfig[
-            MultiLoggerConfigModel[InnerMetricsLoggerConfig],
-            MultiLoggerAdditionalDerivedConfig[
-                InnerMetricsLoggerAdditionalDerivedConfig
-            ],
+            MultiLoggerConfigModel[MetricsLoggerConfig],
+            MultiLoggerAdditionalDerivedConfig[MetricsLoggerAdditionalDerivedConfig],
         ],
     ):
         self.config = config

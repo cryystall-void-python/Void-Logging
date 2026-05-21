@@ -14,7 +14,8 @@ license = { file = "LICENSE" }
 requires-python = ">=3.11"
 dependencies = [
     "rlgym-learn-algos",
-    "rlgym[rl-sim]"
+    "rlgym[rl-sim]",
+    "rich" # For display
 ]
 # Optional: define classifiers for PyPI
 classifiers = [
