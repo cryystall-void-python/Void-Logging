@@ -1,9 +1,10 @@
 """Module for the logged combined reward"""
 
-from typing import Generic, List, Dict, Any
+from typing import Any, Dict, Generic, List
 
 from rlgym.api import AgentID, StateType
-from void_logging.api.rewards.log import SEPARATOR
+
+from rlgym_learn_logging.api.rewards.log import SEPARATOR
 
 from ..rewards.log import Log
 from ..rewards.logged_float import Logged

@@ -1,11 +1,11 @@
 """Module for the apply operation wrapper"""
 
-from typing import Callable, Generic, List, Dict, Any
+from typing import Any, Callable, Dict, Generic, List
 
 from rlgym.api import AgentID, StateType
 
-from void_logging.api.rewards import LoggedReward, Logged, Log
-from void_logging.api.wrappers.wrapper import LoggedWrapper
+from rlgym_learn_logging.api.rewards import Log, Logged, LoggedReward
+from rlgym_learn_logging.api.wrappers.wrapper import LoggedWrapper
 
 
 class ApplyOperationWrapper(

@@ -1,12 +1,12 @@
+from rlgym_learn_logging.api.rewards.log import SEPARATOR
+from rlgym_learn_logging.api.wrappers.custom_name_wrapper import CustomNameWrapper
+from rlgym_learn_logging.logging_utils import REWARDS_HEADER
 from tests.create_env import (
     ConstantReward,
     RLGymUnittestCase,
     create_env,
     generate_random_actions,
 )
-from void_logging.api.rewards.log import SEPARATOR
-from void_logging.api.wrappers.custom_name_wrapper import CustomNameWrapper
-from void_logging.logging_utils import REWARDS_HEADER
 
 
 class CustomNameWrapperTestCase(RLGymUnittestCase):

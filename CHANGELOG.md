@@ -7,13 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 21-05-2026
+
 ### Added
 
 - You can now use the `combine` static method of the ChainWrapper class to create a LoggedCombinedReward
+- You can use the `chain` and `combine` method within rlgym_learn_logging.api.wrapper.methods
 
 ### Changed
 
+- Renamed to "rlgym-learn-logging"
 - Moved `LoggedCombinedReward` to the wrappers module
+- The `MultiLogger` actually validates inner config instead of skipping it
 
 ### Fixed
 

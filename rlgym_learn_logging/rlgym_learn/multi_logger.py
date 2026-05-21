@@ -1,9 +1,11 @@
 """Module for the multi logger"""
 
 from dataclasses import dataclass
+from dataclasses import field as data_field
 from typing import Any, Dict, Generic, List
 
 from pydantic import BaseModel, ValidationError
+from pydantic import Field as PydField
 from rlgym_learn.api.typing import AgentControllerData
 from rlgym_learn_algos.logging import (
     DictMetricsLogger,
@@ -14,7 +16,9 @@ from rlgym_learn_algos.logging.metrics_logger import DerivedMetricsLoggerConfig
 
 
 class MultiLoggerConfigModel(BaseModel, Generic[InnerMetricsLoggerConfig]):
-    inner_metrics_logger_config: List[InnerMetricsLoggerConfig | None] = []
+    inner_metrics_logger_config: List[InnerMetricsLoggerConfig | None] = PydField(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -23,7 +27,7 @@ class MultiLoggerAdditionalDerivedConfig(
 ):
     inner_metrics_logger_additional_derived_config: List[
         InnerMetricsLoggerAdditionalDerivedConfig | None
-    ] = []
+    ] = data_field(default_factory=list)
 
 
 class MultiLogger(

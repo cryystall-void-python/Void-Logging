@@ -2,11 +2,12 @@ from typing import Any, Dict, Generic, List
 
 from rlgym.api.rlgym import AgentID, StateType
 
-from void_logging.api.rewards.logged_float import Logged
-from void_logging.api.rewards.logged_reward import LoggedReward
-from void_logging.api.wrappers.default_if_none_wrapper import DefaultIfNoneWrapper
-from void_logging.logging_utils import REWARDS_HEADER
-
+from rlgym_learn_logging.api.rewards.logged_float import Logged
+from rlgym_learn_logging.api.rewards.logged_reward import LoggedReward
+from rlgym_learn_logging.api.wrappers.default_if_none_wrapper import (
+    DefaultIfNoneWrapper,
+)
+from rlgym_learn_logging.logging_utils import REWARDS_HEADER
 from tests.create_env import RLGymUnittestCase, create_env, generate_random_actions
 
 

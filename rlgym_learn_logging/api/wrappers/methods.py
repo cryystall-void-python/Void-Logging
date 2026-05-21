@@ -1,7 +1,7 @@
 from rlgym.api import AgentID, StateType
 
-from void_logging.api.rewards.logged_reward import LoggedReward
-from void_logging.api.wrappers.chain_wrapper import ChainWrapper
+from rlgym_learn_logging.api.rewards.logged_reward import LoggedReward
+from rlgym_learn_logging.api.wrappers.chain_wrapper import ChainWrapper
 
 
 def chain(reward: LoggedReward[AgentID, StateType]) -> ChainWrapper[AgentID, StateType]:

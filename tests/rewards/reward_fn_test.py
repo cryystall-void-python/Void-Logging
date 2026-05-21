@@ -1,10 +1,11 @@
 from typing import Any, Dict, Generic, List
-from rlgym.api import AgentID, StateType, RewardFunction
 
+from rlgym.api import AgentID, RewardFunction, StateType
+
+from rlgym_learn_logging.api.rewards.log import SEPARATOR
+from rlgym_learn_logging.api.wrappers.reward_fn_wrapper import RewardFnWrapper
+from rlgym_learn_logging.logging_utils import REWARDS_HEADER
 from tests.create_env import RLGymUnittestCase, create_env, generate_random_actions
-from void_logging.api.rewards.log import SEPARATOR
-from void_logging.api.wrappers.reward_fn_wrapper import RewardFnWrapper
-from void_logging.logging_utils import REWARDS_HEADER
 
 
 class BaseReward(
