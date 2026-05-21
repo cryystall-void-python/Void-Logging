@@ -1,19 +1,23 @@
 """Module for the chain wrapper"""
 
-from typing import Any, Self, Callable
+from typing import Any, Generic, Self, Callable
 
+from rlgym.api import AgentID, StateType
+
+from void_logging.api.rewards.logged_reward import LoggedReward
 from void_logging.api.wrappers.apply_operation_wrapper import ApplyOperationWrapper
 from void_logging.api.wrappers.custom_name_wrapper import CustomNameWrapper
 from void_logging.api.wrappers.debug_wrapper import DebugWrapper
 from void_logging.api.wrappers.default_if_none_wrapper import DefaultIfNoneWrapper
 from void_logging.api.wrappers.fill_metrics_wrapper import FillMetricsWrapper
+from void_logging.api.wrappers.logged_combined_reward import LoggedCombinedReward
 from void_logging.api.wrappers.reward_fn_wrapper import RewardFnWrapper
 from void_logging.api.wrappers.weighted_wrapper import WeightedWrapper
 from void_logging.api.wrappers.wrapper import LoggedWrapper
 from void_logging.api.wrappers.zerosum_wrapper import ZeroSumWrapper
 
 
-class ChainWrapper(LoggedWrapper):
+class ChainWrapper(Generic[AgentID, StateType], LoggedWrapper[AgentID, StateType]):
     """
     A wrapper to allow the use of chain functions
     """
@@ -113,3 +117,14 @@ class ChainWrapper(LoggedWrapper):
         assert self._is_reward_fn_logged, "Reward needs to be logged to debug it"
         self._reward_fn = DebugWrapper(self._reward_fn)
         return self
+
+    @staticmethod
+    def combine(
+        *rewards_and_weights: LoggedReward[AgentID, StateType],
+    ) -> "ChainWrapper":
+        """Combines multiple rewards into a chain wrapper
+
+        :return: A chain wrapper containing a logged combined reward with the specified rewards
+        :rtype: ChainWrapper
+        """
+        return ChainWrapper(LoggedCombinedReward(*rewards_and_weights))

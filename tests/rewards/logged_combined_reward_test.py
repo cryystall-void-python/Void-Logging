@@ -5,7 +5,7 @@ from tests.create_env import (
     generate_random_actions,
 )
 from void_logging.api.rewards.log import SEPARATOR
-from void_logging.api.rewards.logged_combined_reward import LoggedCombinedReward
+from void_logging.api.wrappers.logged_combined_reward import LoggedCombinedReward
 from void_logging.logging_utils import REWARDS_HEADER
 
 

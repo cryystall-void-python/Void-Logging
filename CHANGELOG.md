@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- You can now use the `combine` static method of the ChainWrapper class to create a LoggedCombinedReward
+
+### Changed
+
+- Moved `LoggedCombinedReward` to the wrappers module
+
 ### Fixed
 
+- `EpisodeLengthSharedInfoProvider` was only adding 1 to the length instead of the difference between last and current state, this would cause run with repeated actions to display an incorrect duration
 - Some logs had a lot of spaces
 
 ## [0.3.1] - 26-01-2026

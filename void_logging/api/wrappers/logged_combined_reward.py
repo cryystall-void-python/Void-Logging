@@ -5,9 +5,9 @@ from typing import Generic, List, Dict, Any
 from rlgym.api import AgentID, StateType
 from void_logging.api.rewards.log import SEPARATOR
 
-from .log import Log
-from .logged_float import Logged
-from .logged_reward import LoggedReward
+from ..rewards.log import Log
+from ..rewards.logged_float import Logged
+from ..rewards.logged_reward import LoggedReward
 
 
 class LoggedCombinedReward(
