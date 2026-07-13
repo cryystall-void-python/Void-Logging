@@ -11,9 +11,10 @@ from tests.rewards.logged_combined_reward_test import LoggedCombinedRewardTestCa
 from tests.rewards.operations import OperationsTestCase
 from tests.rewards.reward_fn_test import RewardFnWrapperTestCase
 from tests.rewards.zerosum_test import ZeroSumTestCase
+from tests.rlgym_learn.multi_logger_test import MultiLoggerTestCase
 
 
-def suite():
+def reward_suite():
     """Test suite declaration
 
     Returns:
@@ -21,6 +22,7 @@ def suite():
     """
     test_suite = unittest.TestSuite()
 
+    test_suite.addTest(MultiLoggerTestCase())
     test_suite.addTest(BaseTestsCase())
     test_suite.addTest(LoggedCombinedRewardTestCase())
     test_suite.addTest(ZeroSumTestCase())
@@ -34,6 +36,13 @@ def suite():
     return test_suite
 
 
+def rlgym_learn_suite():
+    test_suite = unittest.TestSuite()
+
+    test_suite.addTest(MultiLoggerTestCase())
+    return test_suite
+
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
-    runner.run(suite())
+    runner.run(reward_suite())
+    runner.run(rlgym_learn_suite())

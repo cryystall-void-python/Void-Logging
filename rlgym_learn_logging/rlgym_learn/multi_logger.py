@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from dataclasses import field as data_field
 from typing import Any, Dict, Generic, List
 
-from pydantic import BaseModel, ValidationError
-from pydantic import Field as PydField
+from pydantic import BaseModel, Field, ValidationError
 from rlgym_learn.api.typing import AgentControllerData
 from rlgym_learn_algos.logging import (
     DictMetricsLogger,
@@ -15,8 +14,8 @@ from rlgym_learn_algos.logging import (
 from rlgym_learn_algos.logging.metrics_logger import DerivedMetricsLoggerConfig
 
 
-class MultiLoggerConfigModel(BaseModel, Generic[InnerMetricsLoggerConfig]):
-    inner_metrics_logger_config: List[InnerMetricsLoggerConfig | None] = PydField(
+class MultiLoggerConfigModel(BaseModel, Generic[MetricsLoggerConfig]):
+    inner_metrics_logger_config: List[MetricsLoggerConfig | None] = Field(
         default_factory=list
     )
 
@@ -71,9 +70,13 @@ class MultiLogger(
             ) from e
 
         for _idx, inner_metric_logger in enumerate(self.inner_metrics_loggers):
-            _config = inner_metric_logger.validate_config(
-                config_obj["inner_metrics_logger_config"][_idx]
+            _user_config = (
+                {}
+                if config_obj["inner_metrics_logger_config"][_idx] is None
+                else config_obj["inner_metrics_logger_config"][_idx]
             )
+
+            _config = inner_metric_logger.validate_config(_user_config)
 
             _base_config.inner_metrics_logger_config[_idx] = _config
 
@@ -98,7 +101,7 @@ class MultiLogger(
                 _idx
             ]
 
-            if _inner_config is not None and _inner_derived_config is not None:
+            if _inner_config is not None:
                 inner_metric_logger.load(
                     DerivedMetricsLoggerConfig(
                         metrics_logger_config=_inner_config,
