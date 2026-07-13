@@ -11,7 +11,7 @@ from rlgym_learn_algos.logging import (
     InnerMetricsLoggerAdditionalDerivedConfig,
     InnerMetricsLoggerConfig,
 )
-from rlgym_learn_algos.logging.metrics_logger import DerivedMetricsLoggerConfig
+from rlgym_learn_algos.logging.metrics_logger import DerivedMetricsLoggerConfig, MetricsLoggerConfig
 
 
 class MultiLoggerConfigModel(BaseModel, Generic[MetricsLoggerConfig]):

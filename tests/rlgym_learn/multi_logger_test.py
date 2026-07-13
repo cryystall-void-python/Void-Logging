@@ -4,7 +4,7 @@ from typing import Any
 from pydantic import BaseModel
 from rlgym_learn_algos.logging.dict_metrics_logger import DictMetricsLogger
 from rlgym_learn_algos.logging.metrics_logger import DerivedMetricsLoggerConfig
-from rlgym_learn_algos.logging.wandb_metrics_logger import WandbMetricsLogger, WandbMetricsLoggerConfigModel, WandbAdditionalDerivedConfig
+
 from rlgym_learn_algos.ppo.ppo_metrics_logger import PPOMetricsLogger
 
 from rlgym_learn_logging.rlgym_learn.metric_logger import CustomMetricLogger

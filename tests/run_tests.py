@@ -42,6 +42,7 @@ def rlgym_learn_suite():
     test_suite.addTest(MultiLoggerTestCase())
     return test_suite
 
+
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
     runner.run(reward_suite())
