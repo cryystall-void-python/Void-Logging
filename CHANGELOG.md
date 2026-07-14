@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 14-07-2026
+
+### Changed
+
+- Moved the serdes to the classes of the loggers
+  - reward_metric_logger_serde becomes RewardMetricsLogger.SERDE
+  - custom_metrics_serde becomes CustomMetricLogger.SERDE
+
 ## [0.4.0] - 21-05-2026
 
 ### Added
