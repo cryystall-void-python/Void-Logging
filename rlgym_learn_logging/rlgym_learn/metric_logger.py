@@ -13,6 +13,7 @@ from rlgym_learn_logging.logging_utils import (
     AvgTracker,
 )
 
+
 class CustomMetricLoggerModelConfig(BaseModel, extra="forbid"):
     """A class for the metric logger in case i want to add config"""
 
