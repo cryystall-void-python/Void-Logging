@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rlgym-learn-logging"
-version = "0.4.0"
+version = "0.4.1"
 description = "A logging library for RLGym and RLGym Learn"
 readme = "README.md"
 authors = [
@@ -29,7 +29,7 @@ where = ["."]
 include = ["rlgym_learn_logging*"]
 
 [tool.bumpversion]
-current_version = "0.4.0"
+current_version = "0.4.1"
 parse = """(?x)
     (?P<major>0|[1-9]\\d*)\\.
     (?P<minor>0|[1-9]\\d*)\\.
