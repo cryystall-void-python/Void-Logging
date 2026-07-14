@@ -19,7 +19,7 @@ on:
           type: boolean
           default: false
 
-permissions: 
+permissions:
   contents: write
 
 jobs:
@@ -28,6 +28,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v6
+            - name: Setup GIT
+              run: git config --global user.name "Version bot"
             - name: Bump version
               id: bump
               uses: callowayproject/bump-my-version@master
@@ -40,8 +42,3 @@ jobs:
               if: steps.bump.outputs.bumped == 'true'
               run: |
                 echo "Version was bumped from ${{ steps.bump.outputs.previous-version }} to ${{ steps.bump.outputs.current-version }}!"
-                
-
-              
-
-            
