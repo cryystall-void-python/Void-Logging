@@ -13,18 +13,17 @@ class RewardMetricLoggerConfigModel(BaseModel, extra="forbid"):
     """A fake class to put in case i want to add a config to that class"""
 
 
-reward_metric_logger_serde = PyAnySerdeType.DICT(
-    keys_serde_type=PyAnySerdeType.STRING(),
-    values_serde_type=PyAnySerdeType.DICT(
-        keys_serde_type=PyAnySerdeType.STRING(),
-        values_serde_type=PyAnySerdeType.FLOAT(),
-    ),
-)
-
-
 class RewardMetricsLogger(DictMetricsLogger[RewardMetricLoggerConfigModel, None, None]):
     """Use this class as a logger inside your main to log the
     elements found in shared_info[REWARD_HEADER]"""
+
+    SERDE = PyAnySerdeType.DICT(
+        keys_serde_type=PyAnySerdeType.STRING(),
+        values_serde_type=PyAnySerdeType.DICT(
+            keys_serde_type=PyAnySerdeType.STRING(),
+            values_serde_type=PyAnySerdeType.FLOAT(),
+        ),
+    )
 
     def __init__(self):
         self.env_metrics = {}

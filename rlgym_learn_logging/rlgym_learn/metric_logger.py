@@ -13,29 +13,28 @@ from rlgym_learn_logging.logging_utils import (
     AvgTracker,
 )
 
-custom_metrics_serde = PyAnySerdeType.TYPEDDICT(
-    key_serde_type_dict={
-        PLAYERS_METRICS_HEADER: PyAnySerdeType.DICT(
-            keys_serde_type=PyAnySerdeType.STRING(),
-            values_serde_type=PyAnySerdeType.DICT(
-                keys_serde_type=PyAnySerdeType.STRING(),
-                values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT()),
-            ),
-        ),
-        STATE_METRICS_HEADER: PyAnySerdeType.DICT(
-            keys_serde_type=PyAnySerdeType.STRING(),
-            values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT()),
-        ),
-    }
-)
-
-
 class CustomMetricLoggerModelConfig(BaseModel, extra="forbid"):
     """A class for the metric logger in case i want to add config"""
 
 
 class CustomMetricLogger(DictMetricsLogger[CustomMetricLoggerModelConfig, None, None]):
     """A class to log what is inside of shared_info[METRICS_HEADER]"""
+
+    SERDE = PyAnySerdeType.TYPEDDICT(
+        key_serde_type_dict={
+            PLAYERS_METRICS_HEADER: PyAnySerdeType.DICT(
+                keys_serde_type=PyAnySerdeType.STRING(),
+                values_serde_type=PyAnySerdeType.DICT(
+                    keys_serde_type=PyAnySerdeType.STRING(),
+                    values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT()),
+                ),
+            ),
+            STATE_METRICS_HEADER: PyAnySerdeType.DICT(
+                keys_serde_type=PyAnySerdeType.STRING(),
+                values_serde_type=PyAnySerdeType.OPTION(PyAnySerdeType.FLOAT()),
+            ),
+        }
+    )
 
     def __init__(self):
         self.env_metrics = {}

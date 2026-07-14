@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rlgym-learn-logging"
-version = "0.4.0"
+version = "0.4.1"
 description = "A logging library for RLGym and RLGym Learn"
 readme = "README.md"
 authors = [
@@ -27,3 +27,38 @@ classifiers = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["rlgym_learn_logging*"]
+
+[tool.bumpversion]
+current_version = "0.4.1"
+parse = """(?x)
+    (?P<major>0|[1-9]\\d*)\\.
+    (?P<minor>0|[1-9]\\d*)\\.
+    (?P<patch>0|[1-9]\\d*)
+    (?:
+        (?P<pre_l>[a-zA-Z-]+)         # pre-release label
+        (?P<pre_n>0|[1-9]\\d*)               # pre-release version number
+    )?
+"""
+serialize = ["{major}.{minor}.{patch}{pre_l}{pre_n}",
+    "{major}.{minor}.{patch}",]
+search = "{current_version}"
+replace = "{new_version}"
+regex = false
+ignore_missing_version = false
+ignore_missing_files = false
+tag = false
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = false
+commit = true
+message = "Bump version: {current_version} → {new_version}"
+moveable_tags = []
+commit_args = ""
+setup_hooks = []
+pre_commit_hooks = []
+post_commit_hooks = []
+allow_shell_hooks = false
+
+[tool.bumpversion.parts.pre_l]
+values = ["dev", "rc"]
