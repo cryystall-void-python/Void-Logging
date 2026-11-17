@@ -54,4 +54,3 @@ class RewardMetricsLogger(EnvMetricsLogger):
             rewards_metrics[REWARDS_HEADER].setdefault(metric, tracker.get_avg())
 
         self.env_metrics = rewards_metrics
-

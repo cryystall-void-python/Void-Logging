@@ -89,4 +89,3 @@ class CustomMetricLogger(EnvMetricsLogger):
             metrics[METRICS_HEADER].setdefault(metric, tracker.get_avg())
 
         self.env_metrics = metrics
-

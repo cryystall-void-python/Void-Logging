@@ -1,35 +1,47 @@
 """Module for the multi logger"""
 
-from dataclasses import dataclass
-from dataclasses import field as data_field
-from typing import Any, Dict, Generic, List
+import os
+from os import PathLike
+from typing import Any, Dict, List
 
-from pydantic import BaseModel, Field, ValidationError
-from rlgym_learn.api.typing import AgentControllerData
-from rlgym_learn_algos.logging import (
-    DictMetricsLogger,
-    InnerMetricsLoggerAdditionalDerivedConfig,
-    InnerMetricsLoggerConfig,
-)
-from rlgym_learn_algos.logging.metrics_logger import (
-    DerivedMetricsLoggerConfig,
-    MetricsLoggerConfig,
-)
+from pydantic import BaseModel, Field, ValidationInfo, model_validator
+from rlgym_learn_algos.logging import DerivedMetricsLoggerConfig, DictMetricsLogger
+
+INNER_LOGGER_FOLDER = "inner_metrics_logger_{}"
 
 
-class MultiLoggerConfigModel(BaseModel, Generic[MetricsLoggerConfig]):
-    inner_metrics_logger_config: List[MetricsLoggerConfig | None] = Field(
-        default_factory=list
-    )
+class MultiLoggerConfigModel(BaseModel, extra="forbid"):
+    """Config of a MultiLogger: one entry per inner logger, in the same order.
+    Use None for loggers without a config (their config_model is None)."""
 
+    inner_metrics_logger_config: List[Any] = Field(default_factory=list)
 
-@dataclass
-class MultiLoggerAdditionalDerivedConfig(
-    Generic[InnerMetricsLoggerAdditionalDerivedConfig]
-):
-    inner_metrics_logger_additional_derived_config: List[
-        InnerMetricsLoggerAdditionalDerivedConfig | None
-    ] = data_field(default_factory=list)
+    @model_validator(mode="before")
+    @classmethod
+    def validate_inner_configs(cls, data: Any, info: ValidationInfo) -> Any:
+        """When validated with the MultiLogger as context (as WandbMetricsLogger
+        does with its inner logger), validates each inner config with its
+        logger's config model."""
+        multi_logger = info.context
+        if not isinstance(multi_logger, MultiLogger) or not isinstance(data, dict):
+            return data
+        raw_configs = data.get("inner_metrics_logger_config")
+        if raw_configs is None:
+            raw_configs = [None] * len(multi_logger.inner_metrics_loggers)
+        if len(raw_configs) != len(multi_logger.inner_metrics_loggers):
+            raise ValueError(
+                f"You gave {len(raw_configs)} config objects for "
+                f"{len(multi_logger.inner_metrics_loggers)} loggers. Please provide one "
+                "per logger (None for a logger without config)."
+            )
+        configs = []
+        for logger, raw in zip(multi_logger.inner_metrics_loggers, raw_configs):
+            model = logger.config_model
+            if model is None or not isinstance(raw, dict):
+                configs.append(None if model is None else raw)
+            else:
+                configs.append(model.model_validate(raw, context=logger))
+        return {**data, "inner_metrics_logger_config": configs}
 
 
 class MultiLogger(
