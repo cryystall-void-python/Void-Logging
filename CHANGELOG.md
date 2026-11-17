@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 17-11-2026
+
 ### Changed
 
 - Support rlgym-learn 2.0 and rlgym-learn-algos 0.4 (now required): their metrics logger API changed
