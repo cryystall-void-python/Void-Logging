@@ -48,21 +48,26 @@ class EpisodeLengthSharedInfoProvider(StateMetricSharedInfoProvider):
         return "Misc/Episode Length"
 
     def __init__(self):
-        self._episode_length = 0
+        self._start_tick: int | None = None
+        self._last_tick: int | None = None
 
     def init_metric_value(
         self, initial_state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
-        if self._episode_length != 0:  # Reset called after an episode
-            _ep_length = self._episode_length
-            self._episode_length = 0
-            return _ep_length
-        return None
+        # On reset, report the length (in ticks) of the episode that just ended
+        _ep_length = (
+            None
+            if self._start_tick is None or self._last_tick is None
+            else self._last_tick - self._start_tick
+        )
+        self._start_tick = self._last_tick = initial_state.tick_count
+        return _ep_length
 
     def get_metric_value(
         self, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
-        self._episode_length = state.tick_count - self._episode_length
+        self._last_tick = state.tick_count
+        return None
 
 
 class GoalScoreSpeedSharedInfoProvider(StateMetricSharedInfoProvider):

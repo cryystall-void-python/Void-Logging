@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `RewardMetricsLogger` and `CustomMetricLogger` skip `None` shared infos (envs that send none)
 - `CustomMetricLogger` no longer empties the shared infos it reads (it used `pop`); rlgym-learn keeps them and saves them in checkpoints
+- `EpisodeLengthSharedInfoProvider` reported alternating values (`tick_count - previous value`) instead of the episode length; it now reports, on reset, the ticks between the previous episode's first and last state
+- `PlayerBallHitForceMetricSharedInfoProvider` compared the ball velocity with the one at the previous touch (shared by all players) instead of the step before the touch; it now tracks the previous step per player
 
 ## [0.4.1] - 14-07-2026
 
