@@ -13,7 +13,8 @@ authors = [
 license = { file = "LICENSE" }
 requires-python = ">=3.11"
 dependencies = [
-    "rlgym-learn-algos",
+    "rlgym-learn>=2.0",
+    "rlgym-learn-algos>=0.4",
     "rlgym[rl-sim]",
     "rich" # For display
 ]

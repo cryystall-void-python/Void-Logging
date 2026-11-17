@@ -1,14 +1,16 @@
+import os
+import tempfile
 import unittest
+from os import PathLike
 from typing import Any
 
 from pydantic import BaseModel
-from rlgym_learn_algos.logging.dict_metrics_logger import DictMetricsLogger
 from rlgym_learn_algos.logging.metrics_logger import DerivedMetricsLoggerConfig
 
+from rlgym_learn_logging.rlgym_learn.env_metrics_logger import EnvMetricsLogger
 from rlgym_learn_logging.rlgym_learn.metric_logger import CustomMetricLogger
 from rlgym_learn_logging.rlgym_learn.multi_logger import (
     MultiLogger,
-    MultiLoggerAdditionalDerivedConfig,
     MultiLoggerConfigModel,
 )
 from rlgym_learn_logging.rlgym_learn.reward_metrics_logger import RewardMetricsLogger
@@ -18,51 +20,72 @@ class RequiresConfig(BaseModel):
     some_config_str: str
 
 
-class RequiresConfigMetricsLogger(DictMetricsLogger[RequiresConfig, None, None]):
-    def load(self, config: DerivedMetricsLoggerConfig[RequiresConfig, None]):
+class RequiresConfigMetricsLogger(EnvMetricsLogger):
+    @property
+    def config_model(self) -> type[RequiresConfig]:
+        return RequiresConfig
+
+    def load(self, config: DerivedMetricsLoggerConfig):
         self.config = config
 
-    def collect_agent_metrics(self, data: None):
-        assert hasattr(self, "config"), "Need config to run"
-        assert hasattr(self, "_validated"), "Need to be validated to run"
+    def save_checkpoint(self, folder_path: str | PathLike[str]):
+        self.saved_to = folder_path
+
+    def collect_env_metrics(self, data: list[dict[str, Any] | None]):
         self.metrics = {"data": 1}
 
-    def validate_config(self, config_obj: dict[str, Any]) -> RequiresConfig:
-        self._validated = True
-        return RequiresConfig.model_validate(config_obj)
+    def get_metrics(self) -> dict[str, Any]:
+        return self.metrics
 
 
 class MultiLoggerTestCase(unittest.TestCase):
     def runTest(self):
         self.test_init()
         self.test_load()
+        self.test_config_count_mismatch()
+        self.test_collect_and_checkpoint()
 
     def test_init(self):
         _multi_logger = MultiLogger(RewardMetricsLogger(), CustomMetricLogger())
-
         self.assertEqual(len(_multi_logger.inner_metrics_loggers), 2)
 
-    def test_load(self):
-        _logger = RequiresConfigMetricsLogger()
-        _multi_logger = MultiLogger(_logger, CustomMetricLogger())
-
-        _config = MultiLoggerConfigModel(
-            inner_metrics_logger_config=[RequiresConfig(some_config_str="test"), None]
+    def _load(self, logger: RequiresConfigMetricsLogger) -> MultiLogger:
+        _multi_logger = MultiLogger(logger, CustomMetricLogger())
+        # As WandbMetricsLogger does with its inner logger's config
+        _config = _multi_logger.config_model.model_validate(
+            {"inner_metrics_logger_config": [{"some_config_str": "test"}, None]},
+            context=_multi_logger,
         )
-
-        _multi_logger.validate_config(_config.model_dump())
-
         _multi_logger.load(
             DerivedMetricsLoggerConfig(
                 agent_controller_name="test",
-                checkpoint_load_folder=None,
+                derived_agent_controller_config=None,
                 metrics_logger_config=_config,
-                additional_derived_config=MultiLoggerAdditionalDerivedConfig(
-                    inner_metrics_logger_additional_derived_config=[None, None]
-                ),
+                checkpoint_load_folder=None,
             )
         )
+        return _multi_logger
 
-        self.assertEqual(len(_multi_logger.inner_metrics_loggers), 2)
-        self.assertIn("config", dir(_logger))
-        self.assertIn("_validated", dir(_logger))
+    def test_load(self):
+        _logger = RequiresConfigMetricsLogger()
+        self._load(_logger)
+        self.assertIsInstance(_logger.config.metrics_logger_config, RequiresConfig)
+        self.assertEqual(_logger.config.metrics_logger_config.some_config_str, "test")
+
+    def test_config_count_mismatch(self):
+        _multi_logger = MultiLogger(RewardMetricsLogger(), CustomMetricLogger())
+        with self.assertRaises(ValueError):
+            MultiLoggerConfigModel.model_validate(
+                {"inner_metrics_logger_config": [None]}, context=_multi_logger
+            )
+
+    def test_collect_and_checkpoint(self):
+        _logger = RequiresConfigMetricsLogger()
+        _multi_logger = self._load(_logger)
+        # None entries: envs that sent no shared info
+        _multi_logger.collect_env_metrics([None])
+        self.assertEqual(_multi_logger.get_metrics()["data"], 1)
+        with tempfile.TemporaryDirectory() as folder:
+            _multi_logger.save_checkpoint(folder)
+            self.assertTrue(_logger.saved_to.startswith(folder))
+            self.assertTrue(os.path.isdir(_logger.saved_to))

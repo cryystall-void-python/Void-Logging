@@ -3,8 +3,7 @@
 from typing import Any, Dict, List
 
 from pydantic import BaseModel
-from rlgym_learn.rlgym_learn import PyAnySerdeType
-from rlgym_learn_algos.logging.dict_metrics_logger import DictMetricsLogger
+from rlgym_learn.pyany_serde import PyAnySerdeType
 
 from rlgym_learn_logging.logging_utils import (
     METRICS_HEADER,
@@ -12,12 +11,13 @@ from rlgym_learn_logging.logging_utils import (
     STATE_METRICS_HEADER,
     AvgTracker,
 )
+from rlgym_learn_logging.rlgym_learn.env_metrics_logger import EnvMetricsLogger
 
 class CustomMetricLoggerModelConfig(BaseModel, extra="forbid"):
     """A class for the metric logger in case i want to add config"""
 
 
-class CustomMetricLogger(DictMetricsLogger[CustomMetricLoggerModelConfig, None, None]):
+class CustomMetricLogger(EnvMetricsLogger):
     """A class to log what is inside of shared_info[METRICS_HEADER]"""
 
     SERDE = PyAnySerdeType.TYPEDDICT(
@@ -42,7 +42,7 @@ class CustomMetricLogger(DictMetricsLogger[CustomMetricLoggerModelConfig, None, 
     def get_metrics(self) -> Dict[str, Any]:
         return self.env_metrics
 
-    def collect_env_metrics(self, data: List[Dict[str, Any]]):
+    def collect_env_metrics(self, data: List[Dict[str, Any] | None]):
         metrics = {}
 
         trackers: Dict[str, AvgTracker] = {}
@@ -55,12 +55,17 @@ class CustomMetricLogger(DictMetricsLogger[CustomMetricLoggerModelConfig, None, 
         #       whatever 1: 0.1
 
         for shared_info in data:
+            # None when the env sent no shared info (no shared_info_serde_type)
+            if shared_info is None:
+                continue
             metrics_info: dict[str, Any] = shared_info[METRICS_HEADER]
 
-            player_metrics: dict[str, dict[str, float]] = metrics_info.pop(
+            # get, not pop: rlgym-learn keeps these shared infos (and saves
+            # them in checkpoints), so they must not be modified here.
+            player_metrics: dict[str, dict[str, float]] = metrics_info.get(
                 PLAYERS_METRICS_HEADER, {}
             )
-            state_metrics: dict[str, int | float] = metrics_info.pop(
+            state_metrics: dict[str, int | float] = metrics_info.get(
                 STATE_METRICS_HEADER, {}
             )
 
@@ -84,7 +89,3 @@ class CustomMetricLogger(DictMetricsLogger[CustomMetricLoggerModelConfig, None, 
 
         self.env_metrics = metrics
 
-    def validate_config(
-        self, config_obj: Dict[str, Any]
-    ) -> CustomMetricLoggerModelConfig:
-        return CustomMetricLoggerModelConfig.model_validate(config_obj)
