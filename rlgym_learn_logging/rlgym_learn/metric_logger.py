@@ -13,6 +13,7 @@ from rlgym_learn_logging.logging_utils import (
 )
 from rlgym_learn_logging.rlgym_learn.env_metrics_logger import EnvMetricsLogger
 
+
 class CustomMetricLoggerModelConfig(BaseModel, extra="forbid"):
     """A class for the metric logger in case i want to add config"""
 
