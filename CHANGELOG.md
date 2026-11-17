@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.2] - 17-11-2026
+
+### Changed
+
+- Support rlgym-learn 2.0 and rlgym-learn-algos 0.4 (now required): their metrics logger API changed
+  - `PyAnySerdeType` is imported from `rlgym_learn.pyany_serde`
+  - `RewardMetricsLogger` and `CustomMetricLogger` derive from the new `EnvMetricsLogger` base (no config, nothing to checkpoint); `validate_config` is gone, `config_model` returns None
+  - `MultiLogger` uses `MultiLoggerConfigModel` as its `config_model` (validated against each inner logger's `config_model`), loads inner loggers with the new `DerivedMetricsLoggerConfig`, and saves/loads their checkpoints in `inner_metrics_logger_<index>` sub-folders. `MultiLoggerAdditionalDerivedConfig` is removed.
+
+### Fixed
+
+- `RewardMetricsLogger` and `CustomMetricLogger` skip `None` shared infos (envs that send none)
+- `CustomMetricLogger` no longer empties the shared infos it reads (it used `pop`); rlgym-learn keeps them and saves them in checkpoints
+- `EpisodeLengthSharedInfoProvider` reported alternating values (`tick_count - previous value`) instead of the episode length; it now reports, on reset, the ticks between the previous episode's first and last state
+- `PlayerBallHitForceMetricSharedInfoProvider` compared the ball velocity with the one at the previous touch (shared by all players) instead of the step before the touch; it now tracks the previous step per player
+
 ## [0.4.1] - 14-07-2026
 
 ### Changed

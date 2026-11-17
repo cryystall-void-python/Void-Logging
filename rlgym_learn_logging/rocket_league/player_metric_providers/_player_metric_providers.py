@@ -89,7 +89,8 @@ class PlayerBallHitForceMetricSharedInfoProvider(PlayerMetricSharedInfoProvider)
     """
     Whenever a player hits the ball, it puts the hit force info inside the shared info
 
-    Hit force is considered as the ball acceleration on ball's touch
+    Hit force is considered as the ball acceleration on ball's touch: the change
+    of ball velocity over the step of the touch, per tick (uu/s per tick)
     """
 
     @property
@@ -97,29 +98,30 @@ class PlayerBallHitForceMetricSharedInfoProvider(PlayerMetricSharedInfoProvider)
         return "Player/Hit force"
 
     def __init__(self):
-        self._last_ball_vel = None
-        self._last_tick_count = 0
+        # Ball velocity and tick of the previous step, per agent (this provider
+        # is called once per agent per step)
+        self._last: Dict[Hashable, tuple[np.ndarray, int]] = {}
 
     def init_metric_value_for(
         self, agent: Hashable, initial_state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
-        self._last_ball_vel = initial_state.ball.linear_velocity
-        self._last_tick_count = initial_state.tick_count
+        self._last[agent] = (
+            initial_state.ball.linear_velocity.copy(),
+            initial_state.tick_count,
+        )
+        return None
 
     def get_metric_value_for(
         self, agent: Hashable, state: GameState, shared_info: Dict[str, Any]
     ) -> float | None:
-        if state.cars[agent].ball_touches > 0:
-            _ball_accel = state.ball.linear_velocity - self._last_ball_vel
-            _tick_count = max(1, state.tick_count - self._last_tick_count)
-
-            _ball_accel /= _tick_count
-
-            self._last_ball_vel = state.ball.linear_velocity
-            self._last_tick_count = state.tick_count
-
-            return float(np.linalg.norm(_ball_accel + 1e-8))
-        return None
+        _last_ball_vel, _last_tick_count = self._last[agent]
+        # Updated every step, so a touch is compared with the step just before it
+        self._last[agent] = (state.ball.linear_velocity.copy(), state.tick_count)
+        if state.cars[agent].ball_touches == 0:
+            return None
+        _tick_count = max(1, state.tick_count - _last_tick_count)
+        _ball_accel = (state.ball.linear_velocity - _last_ball_vel) / _tick_count
+        return float(np.linalg.norm(_ball_accel))
 
 
 class PlayerOnGroundRatioMetricSharedInfoProvider(PlayerMetricSharedInfoProvider):
