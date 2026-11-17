@@ -3,17 +3,17 @@
 from typing import Dict, Any, List
 
 from pydantic import BaseModel
-from rlgym_learn.rlgym_learn import PyAnySerdeType
-from rlgym_learn_algos.logging.dict_metrics_logger import DictMetricsLogger
+from rlgym_learn.pyany_serde import PyAnySerdeType
 
 from ..logging_utils import AvgTracker, REWARDS_HEADER
+from .env_metrics_logger import EnvMetricsLogger
 
 
 class RewardMetricLoggerConfigModel(BaseModel, extra="forbid"):
     """A fake class to put in case i want to add a config to that class"""
 
 
-class RewardMetricsLogger(DictMetricsLogger[RewardMetricLoggerConfigModel, None, None]):
+class RewardMetricsLogger(EnvMetricsLogger):
     """Use this class as a logger inside your main to log the
     elements found in shared_info[REWARD_HEADER]"""
 
@@ -31,12 +31,15 @@ class RewardMetricsLogger(DictMetricsLogger[RewardMetricLoggerConfigModel, None,
     def get_metrics(self) -> Dict[str, Any]:
         return self.env_metrics
 
-    def collect_env_metrics(self, data: List[Dict[str, Any]]):
+    def collect_env_metrics(self, data: List[Dict[str, Any] | None]):
         rewards_metrics = {}
 
         trackers: Dict[str, AvgTracker] = {}
 
         for shared_info in data:
+            # None when the env sent no shared info (no shared_info_serde_type)
+            if shared_info is None:
+                continue
             rewards_info: dict[str, dict[str, float]] = shared_info[REWARDS_HEADER]
 
             for _, agent_reward_data in rewards_info.items():
@@ -51,8 +54,3 @@ class RewardMetricsLogger(DictMetricsLogger[RewardMetricLoggerConfigModel, None,
             rewards_metrics[REWARDS_HEADER].setdefault(metric, tracker.get_avg())
 
         self.env_metrics = rewards_metrics
-
-    def validate_config(
-        self, config_obj: Dict[str, Any]
-    ) -> RewardMetricLoggerConfigModel:
-        return RewardMetricLoggerConfigModel.model_validate(config_obj)
